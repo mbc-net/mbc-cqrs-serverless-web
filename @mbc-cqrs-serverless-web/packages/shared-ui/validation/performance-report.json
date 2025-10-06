@@ -1,0 +1,48 @@
+{
+  "bundleSize": {
+    "main": {
+      "size": 0,
+      "formatted": "0 Bytes"
+    },
+    "esm": {
+      "size": 0,
+      "formatted": "0 Bytes"
+    },
+    "server": {
+      "size": 0,
+      "formatted": "0 Bytes"
+    },
+    "css": {
+      "size": 0,
+      "formatted": "0 Bytes"
+    },
+    "total": {
+      "size": 0,
+      "formatted": "0 Bytes"
+    },
+    "optimizedMain": {
+      "size": 0,
+      "formatted": "0 Bytes"
+    },
+    "compressionRatio": "NaN%"
+  },
+  "buildTime": {
+    "cleanBuild": 3989,
+    "optimizedBuild": 3670
+  },
+  "componentPerformance": {
+    "status": "skipped",
+    "reason": "Test environment not ready"
+  },
+  "memoryUsage": {
+    "error": "ENOENT: no such file or directory, open '/Users/uzumakiruto017/Workspace/mcp/mebs-builshiru-web/@mbc-cqrs-serverless-web/packages/shared-ui/validation/package.json'"
+  },
+  "treeShaking": {
+    "status": "skipped",
+    "reason": "Webpack not available"
+  },
+  "overall": {
+    "bundleSizeRating": "excellent",
+    "buildTimeRating": "excellent"
+  }
+}

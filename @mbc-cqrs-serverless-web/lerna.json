@@ -1,0 +1,26 @@
+{
+	"$schema": "node_modules/lerna/schemas/lerna-schema.json",
+	"version": "1.0.0",
+	"npmClient": "npm",
+	"packages": ["packages/*", "apps/*"],
+	"command": {
+		"bootstrap": {
+			"ignore": "npm-*",
+			"npmClientArgs": ["--no-package-lock"]
+		},
+		"publish": {
+			"conventionalCommits": true,
+			"message": "chore(release): publish",
+			"registry": "https://npm.pkg.github.com"
+		}
+	},
+	"ignoreChanges": [
+		"**/*.md",
+		"**/*.test.*",
+		"**/*.spec.*",
+		"**/__tests__/**",
+		"**/stories/**",
+		"**/dist/**",
+		"**/build/**"
+	]
+}

@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MBC Theme Test</title>
+    <link rel="stylesheet" href="dist/index.css" />
+    <style>
+      body {
+        font-family: var(--mbc-font-body);
+        margin: 0;
+        padding: 20px;
+        background-color: var(--mbc-color-background);
+        color: var(--mbc-color-foreground);
+      }
+      .test-container {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      .theme-test {
+        background-color: var(--mbc-color-brand-primary);
+        color: var(--mbc-color-white);
+        padding: var(--mbc-spacing-4);
+        border-radius: var(--mbc-radius-md);
+        font-size: var(--mbc-text-body);
+        font-family: var(--mbc-font-body);
+        margin: var(--mbc-spacing-4) 0;
+      }
+      .color-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: var(--mbc-spacing-4);
+        margin: var(--mbc-spacing-6) 0;
+      }
+      .color-swatch {
+        padding: var(--mbc-spacing-3);
+        border-radius: var(--mbc-radius-sm);
+        text-align: center;
+        font-size: var(--mbc-text-sm);
+      }
+      .brand-colors {
+        background-color: var(--mbc-color-brand-500);
+        color: var(--mbc-color-white);
+      }
+      .neutral-colors {
+        background-color: var(--mbc-color-neutral-200);
+        color: var(--mbc-color-neutral-800);
+      }
+      .error-colors {
+        background-color: var(--mbc-color-error-500);
+        color: var(--mbc-color-white);
+      }
+      .success-colors {
+        background-color: var(--mbc-color-success-500);
+        color: var(--mbc-color-white);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="test-container">
+      <h1
+        style="
+          font-size: var(--mbc-text-heading-1);
+          font-weight: var(--mbc-text-heading-1--font-weight);
+        "
+      >
+        MBC Theme System Test
+      </h1>
+
+      <div class="theme-test">Theme Test - MBC Brand Primary Color</div>
+
+      <h2
+        style="
+          font-size: var(--mbc-text-heading-2);
+          font-weight: var(--mbc-text-heading-2--font-weight);
+        "
+      >
+        Color Palette Test
+      </h2>
+
+      <div class="color-grid">
+        <div class="color-swatch brand-colors">
+          Brand Primary: var(--mbc-color-brand-primary)
+        </div>
+        <div class="color-swatch neutral-colors">
+          Neutral: var(--mbc-color-neutral-200)
+        </div>
+        <div class="color-swatch error-colors">
+          Error: var(--mbc-color-error-500)
+        </div>
+        <div class="color-swatch success-colors">
+          Success: var(--mbc-color-success-500)
+        </div>
+      </div>
+
+      <h2
+        style="
+          font-size: var(--mbc-text-heading-2);
+          font-weight: var(--mbc-text-heading-2--font-weight);
+        "
+      >
+        Typography Test
+      </h2>
+
+      <p style="font-size: var(--mbc-text-caption)">
+        Caption text - var(--mbc-text-caption)
+      </p>
+      <p style="font-size: var(--mbc-text-body)">
+        Body text - var(--mbc-text-body)
+      </p>
+      <p
+        style="
+          font-size: var(--mbc-text-heading-3);
+          font-weight: var(--mbc-text-heading-3--font-weight);
+        "
+      >
+        Heading 3 - var(--mbc-text-heading-3)
+      </p>
+      <p
+        style="
+          font-size: var(--mbc-text-heading-2);
+          font-weight: var(--mbc-text-heading-2--font-weight);
+        "
+      >
+        Heading 2 - var(--mbc-text-heading-2)
+      </p>
+      <p
+        style="
+          font-size: var(--mbc-text-heading-1);
+          font-weight: var(--mbc-text-heading-1--font-weight);
+        "
+      >
+        Heading 1 - var(--mbc-text-heading-1)
+      </p>
+
+      <h2
+        style="
+          font-size: var(--mbc-text-heading-2);
+          font-weight: var(--mbc-text-heading-2--font-weight);
+        "
+      >
+        Spacing Test
+      </h2>
+
+      <div
+        style="
+          background-color: var(--mbc-color-muted);
+          padding: var(--mbc-spacing-4);
+          border-radius: var(--mbc-radius-md);
+        "
+      >
+        <div
+          style="
+            background-color: var(--mbc-color-brand-100);
+            padding: var(--mbc-spacing-2);
+            margin: var(--mbc-spacing-2) 0;
+            border-radius: var(--mbc-radius-sm);
+          "
+        >
+          Spacing 2: var(--mbc-spacing-2)
+        </div>
+        <div
+          style="
+            background-color: var(--mbc-color-brand-200);
+            padding: var(--mbc-spacing-4);
+            margin: var(--mbc-spacing-4) 0;
+            border-radius: var(--mbc-radius-sm);
+          "
+        >
+          Spacing 4: var(--mbc-spacing-4)
+        </div>
+        <div
+          style="
+            background-color: var(--mbc-color-brand-300);
+            padding: var(--mbc-spacing-6);
+            margin: var(--mbc-spacing-6) 0;
+            border-radius: var(--mbc-radius-sm);
+          "
+        >
+          Spacing 6: var(--mbc-spacing-6)
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

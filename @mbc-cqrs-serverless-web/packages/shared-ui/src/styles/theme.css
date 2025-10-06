@@ -1,0 +1,254 @@
+:root {
+	/* MBC Library Theme - Standalone Design Tokens */
+
+	/* Colors - Brand Palette */
+	--mbc-color-brand-50: rgb(247, 254, 231);
+	--mbc-color-brand-100: rgb(236, 252, 203);
+	--mbc-color-brand-200: rgb(217, 249, 157);
+	--mbc-color-brand-300: rgb(190, 242, 100);
+	--mbc-color-brand-400: rgb(163, 230, 53);
+	--mbc-color-brand-500: rgb(132, 204, 22);
+	--mbc-color-brand-600: rgb(101, 163, 13);
+	--mbc-color-brand-700: rgb(77, 124, 15);
+	--mbc-color-brand-800: rgb(63, 98, 18);
+	--mbc-color-brand-900: rgb(54, 83, 20);
+
+	/* Colors - Neutral Palette */
+	--mbc-color-neutral-0: rgb(255, 255, 255);
+	--mbc-color-neutral-50: rgb(250, 250, 250);
+	--mbc-color-neutral-100: rgb(245, 245, 245);
+	--mbc-color-neutral-200: rgb(229, 229, 229);
+	--mbc-color-neutral-300: rgb(212, 212, 212);
+	--mbc-color-neutral-400: rgb(163, 163, 163);
+	--mbc-color-neutral-500: rgb(115, 115, 115);
+	--mbc-color-neutral-600: rgb(82, 82, 82);
+	--mbc-color-neutral-700: rgb(64, 64, 64);
+	--mbc-color-neutral-800: rgb(38, 38, 38);
+	--mbc-color-neutral-900: rgb(23, 23, 23);
+	--mbc-color-neutral-950: rgb(10, 10, 10);
+
+	/* Colors - Error Palette */
+	--mbc-color-error-50: rgb(254, 242, 242);
+	--mbc-color-error-100: rgb(254, 226, 226);
+	--mbc-color-error-200: rgb(254, 202, 202);
+	--mbc-color-error-300: rgb(252, 165, 165);
+	--mbc-color-error-400: rgb(248, 113, 113);
+	--mbc-color-error-500: rgb(239, 68, 68);
+	--mbc-color-error-600: rgb(220, 38, 38);
+	--mbc-color-error-700: rgb(185, 28, 28);
+	--mbc-color-error-800: rgb(153, 27, 27);
+	--mbc-color-error-900: rgb(127, 29, 29);
+
+	/* Colors - Warning Palette */
+	--mbc-color-warning-50: rgb(254, 252, 232);
+	--mbc-color-warning-100: rgb(254, 249, 195);
+	--mbc-color-warning-200: rgb(254, 240, 138);
+	--mbc-color-warning-300: rgb(253, 224, 71);
+	--mbc-color-warning-400: rgb(250, 204, 21);
+	--mbc-color-warning-500: rgb(234, 179, 8);
+	--mbc-color-warning-600: rgb(202, 138, 4);
+	--mbc-color-warning-700: rgb(161, 98, 7);
+	--mbc-color-warning-800: rgb(133, 77, 14);
+	--mbc-color-warning-900: rgb(113, 63, 18);
+
+	/* Colors - Success Palette */
+	--mbc-color-success-50: rgb(240, 253, 244);
+	--mbc-color-success-100: rgb(220, 252, 231);
+	--mbc-color-success-200: rgb(187, 247, 208);
+	--mbc-color-success-300: rgb(134, 239, 172);
+	--mbc-color-success-400: rgb(74, 222, 128);
+	--mbc-color-success-500: rgb(34, 197, 94);
+	--mbc-color-success-600: rgb(22, 163, 74);
+	--mbc-color-success-700: rgb(21, 128, 61);
+	--mbc-color-success-800: rgb(22, 101, 52);
+	--mbc-color-success-900: rgb(20, 83, 45);
+
+	/* Colors - Semantic Aliases */
+	--mbc-color-brand-primary: var(--mbc-color-brand-600);
+	--mbc-color-default-font: var(--mbc-color-neutral-900);
+	--mbc-color-subtext-color: var(--mbc-color-neutral-500);
+	--mbc-color-neutral-border: var(--mbc-color-neutral-200);
+	--mbc-color-white: var(--mbc-color-neutral-0);
+	--mbc-color-default-background: var(--mbc-color-neutral-0);
+
+	/* Colors - MBC Library Standalone Colors */
+	/* These are self-contained values for the MBC library */
+	--mbc-color-border: rgb(226, 232, 240);
+	--mbc-color-input: rgb(255, 255, 255);
+	--mbc-color-ring: rgb(234, 88, 11);
+	--mbc-color-background: rgb(255, 255, 255);
+	--mbc-color-foreground: rgb(2, 8, 23);
+	--mbc-color-primary: rgb(234, 88, 11);
+	--mbc-color-primary-foreground: rgb(250, 250, 249);
+	--mbc-color-secondary: rgb(59, 130, 246);
+	--mbc-color-secondary-foreground: rgb(250, 250, 249);
+	--mbc-color-destructive: rgb(239, 68, 68);
+	--mbc-color-destructive-foreground: rgb(250, 250, 249);
+	--mbc-color-muted: rgb(241, 245, 249);
+	--mbc-color-muted-foreground: rgb(100, 116, 139);
+	--mbc-color-accent: rgb(240, 253, 244);
+	--mbc-color-accent-foreground: rgb(22, 163, 74);
+	--mbc-color-card: rgb(255, 255, 255);
+	--mbc-color-card-foreground: rgb(2, 8, 23);
+
+	/* Typography - Font Sizes (matching original Tailwind CSS exactly) */
+	--mbc-text-xs: 0.75rem; /* 12px */
+	--mbc-text-xs--line-height: calc(1 / 0.75); /* calc(1 / 0.75) */
+
+	--mbc-text-sm: 0.875rem; /* 14px */
+	--mbc-text-sm--line-height: calc(1.25 / 0.875); /* calc(1.25 / 0.875) */
+
+	--mbc-text-base: 1rem; /* 16px */
+	--mbc-text-base--line-height: calc(1.5 / 1); /* calc(1.5 / 1) */
+
+	--mbc-text-lg: 1.125rem; /* 18px */
+	--mbc-text-lg--line-height: calc(1.75 / 1.125); /* calc(1.75 / 1.125) */
+
+	--mbc-text-xl: 1.25rem; /* 20px */
+	--mbc-text-xl--line-height: calc(1.75 / 1.25); /* calc(1.75 / 1.25) */
+
+	--mbc-text-2xl: 1.5rem; /* 24px */
+	--mbc-text-2xl--line-height: calc(2 / 1.5); /* calc(2 / 1.5) */
+
+	--mbc-text-3xl: 1.875rem; /* 30px */
+	--mbc-text-3xl--line-height: calc(2.25 / 1.875); /* calc(2.25 / 1.875) */
+
+	--mbc-text-4xl: 2.25rem; /* 36px */
+	--mbc-text-4xl--line-height: calc(2.5 / 2.25); /* calc(2.5 / 2.25) */
+
+	--mbc-text-5xl: 3rem; /* 48px */
+	--mbc-text-5xl--line-height: 1; /* 1 */
+
+	--mbc-text-6xl: 3.75rem; /* 60px */
+	--mbc-text-6xl--line-height: 1; /* 1 */
+
+	--mbc-text-7xl: 4.5rem; /* 72px */
+	--mbc-text-7xl--line-height: 1; /* 1 */
+
+	--mbc-text-8xl: 6rem; /* 96px */
+	--mbc-text-8xl--line-height: 1; /* 1 */
+
+	--mbc-text-9xl: 8rem; /* 128px */
+	--mbc-text-9xl--line-height: 1; /* 1 */
+
+	/* MBC MBC Library Typography Aliases (for backward compatibility) */
+	--mbc-text-caption: var(--mbc-text-xs);
+	--mbc-text-caption--font-weight: 400;
+	--mbc-text-caption--letter-spacing: 0em;
+	--mbc-text-caption--line-height: var(--mbc-text-xs--line-height);
+
+	--mbc-text-caption-bold: var(--mbc-text-xs);
+	--mbc-text-caption-bold--font-weight: 600;
+	--mbc-text-caption-bold--letter-spacing: 0em;
+	--mbc-text-caption-bold--line-height: var(--mbc-text-xs--line-height);
+
+	--mbc-text-body: var(--mbc-text-sm);
+	--mbc-text-body--font-weight: 400;
+	--mbc-text-body--letter-spacing: 0em;
+	--mbc-text-body--line-height: var(--mbc-text-sm--line-height);
+
+	--mbc-text-body-bold: var(--mbc-text-sm);
+	--mbc-text-body-bold--font-weight: 600;
+	--mbc-text-body-bold--letter-spacing: 0em;
+	--mbc-text-body-bold--line-height: var(--mbc-text-sm--line-height);
+
+	--mbc-text-heading-3: var(--mbc-text-base);
+	--mbc-text-heading-3--font-weight: 600;
+	--mbc-text-heading-3--letter-spacing: 0em;
+	--mbc-text-heading-3--line-height: var(--mbc-text-base--line-height);
+
+	--mbc-text-heading-2: var(--mbc-text-xl);
+	--mbc-text-heading-2--font-weight: 600;
+	--mbc-text-heading-2--letter-spacing: 0em;
+	--mbc-text-heading-2--line-height: var(--mbc-text-xl--line-height);
+
+	--mbc-text-heading-1: var(--mbc-text-3xl);
+	--mbc-text-heading-1--font-weight: 700;
+	--mbc-text-heading-1--letter-spacing: 0em;
+	--mbc-text-heading-1--line-height: var(--mbc-text-3xl--line-height);
+
+	--mbc-text-monospace-body: var(--mbc-text-sm);
+	--mbc-text-monospace-body--font-weight: 400;
+	--mbc-text-monospace-body--letter-spacing: 0em;
+	--mbc-text-monospace-body--line-height: var(--mbc-text-sm--line-height);
+
+	/* Typography - Font Families */
+	--mbc-font-caption: "Bokor", system-ui, sans-serif;
+	--mbc-font-caption-bold: "Bokor", system-ui, sans-serif;
+	--mbc-font-body: "Bokor", system-ui, sans-serif;
+	--mbc-font-body-bold: "Bokor", system-ui, sans-serif;
+	--mbc-font-heading-3: "Bokor", system-ui, sans-serif;
+	--mbc-font-heading-2: "Bokor", system-ui, sans-serif;
+	--mbc-font-heading-1: "Bokor", system-ui, sans-serif;
+	--mbc-font-monospace-body: "Fira Code", "Monaco", "Consolas", monospace;
+
+	/* Shadows */
+	--mbc-shadow-sm: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+	--mbc-shadow-default: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+	--mbc-shadow-md: 0px 4px 16px -2px rgba(0, 0, 0, 0.08), 0px 2px 4px -1px
+		rgba(0, 0, 0, 0.08);
+	--mbc-shadow-lg: 0px 12px 32px -4px rgba(0, 0, 0, 0.08), 0px 4px 8px -2px
+		rgba(0, 0, 0, 0.08);
+	--mbc-shadow-overlay: 0px 12px 32px -4px rgba(0, 0, 0, 0.08), 0px 4px 8px -2px
+		rgba(0, 0, 0, 0.08);
+
+	/* Border Radius */
+	--mbc-radius-xs: 1px;
+	--mbc-radius-sm: 2px;
+	--mbc-radius-md: 4px;
+	--mbc-radius-DEFAULT: 4px;
+	--mbc-radius-lg: 8px;
+	--mbc-radius-xl: 12px;
+	--mbc-radius-2xl: 16px;
+	--mbc-radius-3xl: 24px;
+	--mbc-radius-full: 9999px;
+
+	/* Spacing */
+	--mbc-spacing-0: 0rem; /* 0px */
+	--mbc-spacing-1: 0.25rem; /* 4px */
+	--mbc-spacing-2: 0.5rem; /* 8px */
+	--mbc-spacing-3: 0.75rem; /* 12px */
+	--mbc-spacing-4: 1rem; /* 16px */
+	--mbc-spacing-5: 1.25rem; /* 20px */
+	--mbc-spacing-6: 1.5rem; /* 24px */
+	--mbc-spacing-8: 2rem; /* 32px */
+	--mbc-spacing-10: 2.5rem; /* 40px */
+	--mbc-spacing-12: 3rem; /* 48px */
+	--mbc-spacing-16: 4rem; /* 64px */
+	--mbc-spacing-20: 5rem; /* 80px */
+	--mbc-spacing-24: 6rem; /* 96px */
+	--mbc-spacing-32: 8rem; /* 128px */
+	--mbc-spacing-40: 10rem; /* 160px */
+	--mbc-spacing-48: 12rem; /* 192px */
+	--mbc-spacing-56: 14rem; /* 224px */
+	--mbc-spacing-64: 16rem; /* 256px */
+	--mbc-spacing-72: 18rem; /* 288px */
+	--mbc-spacing-80: 20rem; /* 320px */
+	--mbc-spacing-96: 24rem; /* 384px */
+	--mbc-spacing-112: 28rem; /* 448px */
+	--mbc-spacing-128: 32rem; /* 512px */
+	--mbc-spacing-144: 36rem; /* 576px */
+	--mbc-spacing-160: 40rem; /* 640px */
+	--mbc-spacing-176: 44rem; /* 704px */
+	--mbc-spacing-192: 48rem; /* 768px */
+	--mbc-spacing-208: 52rem; /* 832px */
+	--mbc-spacing-224: 56rem; /* 896px */
+	--mbc-spacing-240: 60rem; /* 960px */
+	--mbc-spacing-256: 64rem; /* 1024px */
+	--mbc-spacing-288: 72rem; /* 1152px */
+	--mbc-spacing-320: 80rem; /* 1280px */
+	--mbc-spacing-384: 96rem; /* 1536px */
+
+	/* Breakpoints */
+	--mbc-breakpoint-sm: 640px;
+	--mbc-breakpoint-md: 768px;
+	--mbc-breakpoint-lg: 1024px;
+	--mbc-breakpoint-xl: 1280px;
+	--mbc-breakpoint-2xl: 1536px;
+
+	/* Transitions */
+	--mbc-transition-duration: 0.3s;
+	--mbc-transition-easing: ease-in-out;
+	--mbc-transition-duration-fast: 0.15s;
+	--mbc-transition-duration-slow: 0.5s;
+}
