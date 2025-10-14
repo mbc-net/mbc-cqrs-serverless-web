@@ -1,26 +1,26 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
-import { Icon } from '@/components/ui/icon'
-import { Input } from '@/components/ui/input'
-import { Separator } from '@/components/ui/separator'
+import { Button } from '../ui/button'
+import { Icon } from '../ui/icon'
+import { Input } from '../ui/input'
+import { Separator } from '../ui/separator'
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from '@/components/ui/sheet'
-import { Skeleton } from '@/components/ui/skeleton'
+} from '../ui/sheet'
+import { Skeleton } from '../ui/skeleton'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/components/ui/tooltip'
-import { useIsMobile } from '@/hooks/use-mobile'
-import { cn } from '@/utils/index'
-import { updateSessionField } from '@/utils/parse-session'
+} from '../ui/tooltip'
+// import { useIsMobile } from '@/hooks/use-mobile'
+import { cn } from '../utils/index'
+// import { updateSessionField } from '../utils/parse-session'
 import { Slot } from '@radix-ui/react-slot'
 import { type VariantProps, cva } from 'class-variance-authority'
 import * as React from 'react'
@@ -65,7 +65,7 @@ function SidebarProvider({
   open?: boolean
   onOpenChange?: (open: boolean) => void
 }) {
-  const isMobile = useIsMobile()
+  const isMobile = false // TODO: Implement mobile detection
   const [openMobile, setOpenMobile] = React.useState(false)
 
   // This is the internal state of the sidebar.
@@ -83,7 +83,7 @@ function SidebarProvider({
         _setOpen(openState)
       }
 
-      updateSessionField(SIDEBAR_COOKIE_NAME, String(openState))
+      // updateSessionField(SIDEBAR_COOKIE_NAME, String(openState)) // TODO: Implement session field update
     },
     [setOpenProp, open]
   )

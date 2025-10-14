@@ -3,8 +3,8 @@
 import { ChevronsUpDown, X } from 'lucide-react'
 import * as React from 'react'
 
-import { cn } from '@/utils'
-import { LoadingOverlay } from '../custom/loading/Loading'
+import { cn } from '../utils'
+import { LoadingOverlay } from '../components/loading/Loading'
 import { Badge } from './badge'
 import { Button } from './button'
 import {

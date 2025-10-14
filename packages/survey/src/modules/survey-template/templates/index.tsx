@@ -13,7 +13,7 @@ import {
   SurveyTemplateLoadingState,
 } from '../components'
 
-export default function SurveyTemplatePage() {
+export function SurveyTemplatePage() {
   const [searchParams, setSearchParams] = useQueryStates({
     page: parseAsInteger.withDefault(1),
     pageSize: parseAsInteger.withDefault(10),

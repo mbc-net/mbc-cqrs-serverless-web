@@ -1,4 +1,4 @@
-import { cn } from '@/utils/index'
+import { cn } from '../utils/index'
 import { Slot } from '@radix-ui/react-slot'
 import { type VariantProps, cva } from 'class-variance-authority'
 import { Loader2 } from 'lucide-react'

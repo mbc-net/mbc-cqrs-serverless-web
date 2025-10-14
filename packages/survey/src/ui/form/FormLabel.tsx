@@ -1,6 +1,6 @@
 'use client'
 
-import { cn } from '@/utils'
+import { cn } from '../../utils'
 import type { ComponentProps } from 'react'
 import { Label } from '../label'
 import { useFormField } from './hooks'

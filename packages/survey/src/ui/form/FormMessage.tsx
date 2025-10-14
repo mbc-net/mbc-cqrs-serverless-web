@@ -1,6 +1,6 @@
 'use client'
 
-import { cn } from '@/utils'
+import { cn } from '../utils'
 import { Container } from '../container'
 import { useFormField } from './hooks'
 import type { FormMessageProps } from './types'

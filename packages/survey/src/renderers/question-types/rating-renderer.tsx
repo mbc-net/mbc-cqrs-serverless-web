@@ -1,5 +1,5 @@
 'use client'
-import { cn } from '@/utils'
+import { cn } from '../../utils'
 import { Heart, Star, ThumbsUp } from 'lucide-react'
 import type React from 'react'
 import { useState } from 'react'

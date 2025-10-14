@@ -1,6 +1,6 @@
 'use client'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Label } from '@/components/ui/label'
+import { Checkbox } from '../../ui/checkbox'
+import { Label } from '../../ui/label'
 import type React from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import type { MultipleChoiceQuestionType } from '../../types/schema'

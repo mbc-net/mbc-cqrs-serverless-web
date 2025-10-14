@@ -3,7 +3,7 @@
 import * as DialogPrimitive from '@radix-ui/react-dialog'
 import type * as React from 'react'
 
-import { cn } from '@/utils/index'
+import { cn } from '../utils/index'
 import { Icon } from './icon'
 
 function Dialog({

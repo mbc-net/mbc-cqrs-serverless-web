@@ -1,4 +1,4 @@
-import { cn } from '@/utils'
+import { cn } from '../../utils'
 import { Container } from '../container'
 import type { IconWrapperProps } from './types'
 import { iconWrapperVariants } from './variants'

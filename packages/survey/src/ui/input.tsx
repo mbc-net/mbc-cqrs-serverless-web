@@ -1,7 +1,7 @@
 import { type VariantProps, cva } from 'class-variance-authority'
 import * as React from 'react'
 
-import { cn } from '@/utils/index'
+import { cn } from '../utils/index'
 import { AlertCircle, Search } from 'lucide-react'
 
 const inputVariants = cva(

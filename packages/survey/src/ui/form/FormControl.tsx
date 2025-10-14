@@ -1,6 +1,6 @@
 'use client'
 
-import { cn } from '@/utils'
+import { cn } from '../../utils'
 import { Slot } from '@radix-ui/react-slot'
 import type { ComponentProps, HTMLAttributes } from 'react'
 import { useFormField } from './hooks'

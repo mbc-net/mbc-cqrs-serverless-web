@@ -5,7 +5,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from '../../ui/select'
 import type React from 'react'
 import { useMemo } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'

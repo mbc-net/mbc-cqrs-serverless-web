@@ -1,6 +1,4 @@
-// Main survey module exports
-export * from './types'
-export * from './forms'
-export * from './renderers'
-export * from './creators'
-export * from './components/layout'
+// Export the three main components
+export { SurveyTemplatePage } from './modules/survey-template/templates/index'
+export { EditSurveyTemplatePage } from './modules/edit-survey-template/templates/index'
+export { SurveyForm } from './forms/survey-form'

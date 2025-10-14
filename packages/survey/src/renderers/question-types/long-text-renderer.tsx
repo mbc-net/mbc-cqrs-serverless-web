@@ -1,6 +1,6 @@
 // components/survey/renderers/question-types/long-text-renderer.tsx
 'use client'
-import { Textarea } from '@/components/ui/textarea'
+import { Textarea } from '../../ui/textarea'
 import type React from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import type { LongTextQuestionType } from '../../types/schema'

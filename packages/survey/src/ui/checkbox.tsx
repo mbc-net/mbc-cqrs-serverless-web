@@ -1,7 +1,7 @@
 'use client'
 
-import { Icon } from '@/components/ui/icon'
-import { cn } from '@/utils/index'
+import { Icon } from '../ui/icon'
+import { cn } from '../utils/index'
 import * as CheckboxPrimitive from '@radix-ui/react-checkbox'
 import type * as React from 'react'
 

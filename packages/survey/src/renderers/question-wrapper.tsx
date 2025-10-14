@@ -1,5 +1,5 @@
 'use client'
-import { Label } from '@/components/ui/label'
+import { Label } from '../ui/label'
 import type React from 'react'
 import { useFormContext } from 'react-hook-form'
 

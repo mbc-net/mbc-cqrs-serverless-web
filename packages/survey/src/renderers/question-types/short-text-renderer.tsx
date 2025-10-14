@@ -1,5 +1,5 @@
 'use client'
-import { Input } from '@/components/ui/input'
+import { Input } from '../../ui/input'
 import type React from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import type { ShortTextQuestionType } from '../../types/schema'

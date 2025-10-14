@@ -1,6 +1,6 @@
 'use client'
-import DatePickerWithYearControl from '@/components/custom/DatePickerWithYearControl'
-import DateTimePickerWithYearControl from '@/components/custom/DateTimePickerWithYearControl'
+import DatePickerWithYearControl from '../../components/DatePickerWithYearControl'
+import DateTimePickerWithYearControl from '../../components/DateTimePickerWithYearControl'
 import type React from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import type { DateQuestionType } from '../../types/schema'

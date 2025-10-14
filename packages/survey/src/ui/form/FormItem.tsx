@@ -1,6 +1,6 @@
 'use client'
 
-import { cn } from '@/utils'
+import { cn } from '../../utils'
 import { createContext, useId } from 'react'
 import { Container } from '../container'
 import type { FormItemContextValue, FormItemProps } from './types'

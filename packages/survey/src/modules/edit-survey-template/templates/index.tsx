@@ -13,7 +13,7 @@ import {
   SurveyFormActionButtons,
 } from '../components'
 
-export default function EditSurveyTemplatePage() {
+export function EditSurveyTemplatePage() {
   const rawParams = useParams<{ id: string }>()
   const id = rawParams.id
 

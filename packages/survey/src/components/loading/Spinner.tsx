@@ -1,4 +1,4 @@
-import { cn } from '@/utils'
+import { cn } from '../../utils'
 import { Loader2 } from 'lucide-react'
 
 type SpinnerProps = {
