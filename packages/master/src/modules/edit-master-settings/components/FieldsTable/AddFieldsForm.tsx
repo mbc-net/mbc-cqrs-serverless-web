@@ -104,6 +104,7 @@ const baseSchema = z.object({
   prefix: z.string({ required_error: '入力してください。' }).optional(),
   postfix: z.string().optional(),
   textFormat: TextFormats.optional(),
+  pattern: z.string().optional(),
 })
 
 // === REFINEMENTS ===
@@ -256,6 +257,7 @@ export default function AddFieldsForm({
     maxRow: undefined,
     textFormat: 'area',
     dataFormat: undefined,
+    pattern: undefined,
   }
 
   const form = useForm<FieldsSchema>({
@@ -281,6 +283,7 @@ export default function AddFieldsForm({
       ...data,
       maxRow: data?.maxRow ? Number(data.maxRow) : undefined,
       length: data.dataType === 'string' ? data.length : undefined,
+      pattern: data.dataType === 'string' ? data.pattern : undefined,
       min: data.dataType === 'number' ? data.min : undefined,
       max: data.dataType === 'number' ? data.max : undefined,
       // Convert boolean defaultValue to string for compatibility with SettingAttrFields
@@ -804,6 +807,27 @@ export default function AddFieldsForm({
                       )}
                     />
                   ))}
+                {form.watch('dataType') === 'string' && (
+                  <FormField
+                    control={form.control}
+                    name="pattern"
+                    render={({ field }) => (
+                      <CustomFormItem
+                        className="block"
+                        label="正規表現パターン"
+                      >
+                        <FormControl>
+                          <Input
+                            autoComplete="pattern"
+                            placeholder="正規表現パターンを入力してください"
+                            className="text-[hsl(var(--foreground))] focus-visible:ring-offset-0"
+                            {...field}
+                          />
+                        </FormControl>
+                      </CustomFormItem>
+                    )}
+                  />
+                )}
                 <div className="flex items-start justify-start gap-10">
                   <FormField
                     control={form.control}

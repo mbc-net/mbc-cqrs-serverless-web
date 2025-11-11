@@ -46,6 +46,7 @@ export type SettingAttrFields = {
   dataFormat?: string
   formatCode?: string
   formatName?: string
+  pattern?: string
 }
 export type SettingAttributes = {
   description: string

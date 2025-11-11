@@ -957,6 +957,20 @@ export default function EditMasterData() {
                                   message: `${field.length}文字以内で入力してください。`,
                                 }
                               : undefined,
+                            validate: (value) => {
+                              if (!value && !field.isRequired) return true
+                              if (field.pattern) {
+                                try {
+                                  const regex = new RegExp(field.pattern)
+                                  if (!regex.test(value)) {
+                                    return `正規表現パターンが正しくありません。パターン: ${field.pattern}`
+                                  }
+                                } catch (error) {
+                                  return `正規表現パターンが正しくありません。パターン: ${field.pattern}`
+                                }
+                              }
+                              return true
+                            },
                           })}
                         />
                       )
