@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.29](https://github.com/mbc-net/mbc-cqrs-serverless-web/compare/v0.0.28...v0.0.29) (2025-11-12)
+
+### Features
+
+- add clear button functionality to MasterData and MasterSetting components ([707f7cd](https://github.com/mbc-net/mbc-cqrs-serverless-web/commit/707f7cdf1cb911ad6ea39eb75c2ed27236ca8459))
+
 ## [0.0.28](https://github.com/mbc-net/mbc-cqrs-serverless-web/compare/v0.0.27...v0.0.28) (2025-11-11)
 
 ### Features
