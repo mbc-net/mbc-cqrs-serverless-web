@@ -11,7 +11,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
 import { ColumnDef } from '@tanstack/react-table'
-import { Search } from 'lucide-react'
+import { Search, X } from 'lucide-react'
 import LoadingOverlay from '../../../components/LoadingOverlay'
 import { BackButton } from '../../../components/buttons/back-button'
 import { DataTable } from '../../../components/table/data-table'
@@ -178,6 +178,15 @@ export default function MasterData() {
   }
   useHealthCheck()
 
+  const handleClear = () => {
+    const clearedValues: SearchPropsMasterData = {
+      code: '',
+      keyword: '',
+      isDeleted: false,
+    }
+    reset(clearedValues)
+    onSubmitSearch(clearedValues)
+  }
   const columns: ColumnDef<MasterRdsEntity>[] = useMemo(() => {
     // First, define the dynamically generated columns from the settings
     const dynamicColumns: ColumnDef<MasterRdsEntity>[] =
@@ -504,6 +513,14 @@ export default function MasterData() {
                       <Button type="submit">
                         <Search className="mr-2 h-4 w-4" />
                         検索
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        onClick={handleClear}
+                      >
+                        <X className="mr-2 h-4 w-4" />
+                        クリア
                       </Button>
                     </div>
                   </form>

@@ -7,7 +7,7 @@ import Link from 'next/link'
 import React, { useEffect, useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 
-import { Search } from 'lucide-react'
+import { Search, X } from 'lucide-react'
 import { CommonButton } from '../../../components/buttons'
 import { BackButton } from '../../../components/buttons/back-button'
 import { DataTable } from '../../../components/table/data-table'
@@ -83,7 +83,7 @@ export default function MasterSetting({
 
   const httpClient = useHttpClient()
 
-  const { loadingStore, control, handleSubmit } =
+  const { loadingStore, control, handleSubmit, reset } =
     useLoadingForm<SearchPropsMasterSetting>({
       defaultValues: {
         code: '',
@@ -140,7 +140,7 @@ export default function MasterSetting({
   >({
     searchPropDefinitions: searchPropDefinitions,
     getData: getData,
-    reset: form.reset,
+    reset: reset,
     rootPath: urlProvider.SETTINGS_PAGE_URL,
   })
 
@@ -228,6 +228,16 @@ export default function MasterSetting({
     navigate(urlProvider.TOP_URL)
   }
 
+  const handleClear = () => {
+    const clearedValues: SearchPropsMasterSetting = {
+      code: '',
+      name: '',
+      keyword: '',
+    }
+    reset(clearedValues)
+    onSubmitSearch(clearedValues)
+  }
+
   const pagination = useMemo(
     () => ({
       pageIndex: (searchProps?.page ?? 1) - 1,
@@ -308,6 +318,10 @@ export default function MasterSetting({
                 <Button type="submit">
                   <Search className="mr-2 h-4 w-4" />
                   検索
+                </Button>
+                <Button type="button" variant="secondary" onClick={handleClear}>
+                  <X className="mr-2 h-4 w-4" />
+                  クリア
                 </Button>
               </div>
             </form>
