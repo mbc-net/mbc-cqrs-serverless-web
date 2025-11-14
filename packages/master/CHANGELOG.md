@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.30](https://github.com/mbc-net/mbc-cqrs-serverless-web/compare/v0.0.29...v0.0.30) (2025-11-14)
+
+### Features
+
+- implement helper function to build attributes object for master data form ([47d54ed](https://github.com/mbc-net/mbc-cqrs-serverless-web/commit/47d54ed85eec4f83616891455eedf66a5203c011))
+
 ## [0.0.29](https://github.com/mbc-net/mbc-cqrs-serverless-web/compare/v0.0.28...v0.0.29) (2025-11-12)
 
 ### Features
