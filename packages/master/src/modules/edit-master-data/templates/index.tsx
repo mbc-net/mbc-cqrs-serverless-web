@@ -116,6 +116,7 @@ export default function EditMasterData() {
   const isExistCodeInFields = currentSetting?.attributes.fields
     .map((field) => field.physicalName)
     .includes('code')
+
   const [detailInfo, setDetailInfo] = useState<{
     pk: string
     sk: string
@@ -476,6 +477,48 @@ export default function EditMasterData() {
     reset(data)
   }
 
+  // Helper function to build attributes object with all fields from master setting
+  const buildAttributesForJson = () => {
+    const formValues = watch()
+    const attributes: Record<string, any> = { ...formValues.attributes }
+
+    if (currentSetting?.attributes.fields) {
+      currentSetting.attributes.fields.forEach((field) => {
+        const fieldName = field.physicalName
+        const formValue = formValues.attributes?.[fieldName]
+
+        if (formValue === undefined || formValue === null || formValue === '') {
+          switch (field.dataType) {
+            case 'number':
+              attributes[fieldName] = field.defaultValue ?? 0
+              break
+            case 'boolean':
+              attributes[fieldName] = field.defaultValue ?? false
+              break
+            case 'array':
+              attributes[fieldName] = Array.isArray(field.defaultValue)
+                ? field.defaultValue
+                : []
+              break
+            case 'json':
+              attributes[fieldName] = field.defaultValue ?? ''
+              break
+            case 'date':
+              attributes[fieldName] = field.defaultValue ?? ''
+              break
+            default:
+              attributes[fieldName] = field.defaultValue ?? ''
+              break
+          }
+        } else {
+          attributes[fieldName] = formValue
+        }
+      })
+    }
+
+    return attributes
+  }
+
   useEffect(() => {
     setReadOnly(isEdit)
   }, [isEdit])
@@ -588,19 +631,34 @@ export default function EditMasterData() {
                       <AddJsonData
                         disabled={!watch('settingCode')}
                         jsonValue={JSON.stringify(
-                          isExistCodeInFields
-                            ? {
-                                ...watch(),
-                                code: watch().attributes?.code,
-                                name: watch().attributes?.name,
-                                seq: watch().attributes?.seq ?? 0,
+                          (() => {
+                            const formValues = watch()
+                            const attributes = buildAttributesForJson()
+
+                            if (isExistCodeInFields) {
+                              return {
+                                ...formValues,
+                                code: formValues.attributes?.code ?? '',
+                                name: formValues.attributes?.name ?? '',
+                                attributes: {
+                                  ...attributes,
+                                  code: formValues.attributes?.code ?? '',
+                                  name: formValues.attributes?.name ?? '',
+                                  seq: formValues.attributes?.seq ?? 0,
+                                },
                               }
-                            : {
-                                ...watch(),
-                                code: watch().code,
-                                name: watch().name,
-                                seq: watch().attributes?.seq ?? 0,
+                            } else {
+                              return {
+                                ...formValues,
+                                code: formValues.code ?? '',
+                                name: formValues.name ?? '',
+                                attributes: {
+                                  ...attributes,
+                                  seq: formValues.attributes?.seq ?? 0,
+                                },
                               }
+                            }
+                          })()
                         ).toString()}
                         onSave={handleSaveJson}
                       />
