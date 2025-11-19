@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.31](https://github.com/mbc-net/mbc-cqrs-serverless-web/compare/v0.0.30...v0.0.31) (2025-11-19)
+
+### Bug Fixes
+
+- update error messages for regex validation to be more user-friendly in EditMasterData component ([0f283c7](https://github.com/mbc-net/mbc-cqrs-serverless-web/commit/0f283c7311c4b0e68578c9289970b4a039a23a58))
+
 ## [0.0.30](https://github.com/mbc-net/mbc-cqrs-serverless-web/compare/v0.0.29...v0.0.30) (2025-11-14)
 
 ### Features

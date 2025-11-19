@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.31](https://github.com/mbc-net/mbc-cqrs-serverless-web/compare/v0.0.30...v0.0.31) (2025-11-19)
+
+**Note:** Version bump only for package @mbc-cqrs-serverless/survey-web
+
 ## [0.0.30](https://github.com/mbc-net/mbc-cqrs-serverless-web/compare/v0.0.29...v0.0.30) (2025-11-14)
 
 **Note:** Version bump only for package @mbc-cqrs-serverless/survey-web
