@@ -1021,10 +1021,10 @@ export default function EditMasterData() {
                                 try {
                                   const regex = new RegExp(field.pattern)
                                   if (!regex.test(value)) {
-                                    return `正規表現パターンが正しくありません。パターン: ${field.pattern}`
+                                    return `${field.name} の型が違います。`
                                   }
                                 } catch (error) {
-                                  return `正規表現パターンが正しくありません。パターン: ${field.pattern}`
+                                  return `${field.name} の型が違います。`
                                 }
                               }
                               return true
