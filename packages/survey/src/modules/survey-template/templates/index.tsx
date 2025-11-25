@@ -42,11 +42,11 @@ export function SurveyTemplatePage() {
   )
 
   const handleCreateNew = useCallback(() => {
-    router.push('/dashboard/survey-management/create')
+    router.push('/admin/survey-management/create')
   }, [])
 
   const handleSurveyClick = useCallback((survey: SurveyTemplateDataEntity) => {
-    router.push(`/dashboard/survey-management/${encodeURIComponent(survey.id)}`)
+    router.push(`/admin/survey-management/${encodeURIComponent(survey.id)}`)
   }, [])
 
   // Memoize survey data to prevent unnecessary re-renders

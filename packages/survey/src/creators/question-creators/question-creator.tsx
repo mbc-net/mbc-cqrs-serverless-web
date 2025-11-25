@@ -43,7 +43,7 @@ import {
   Trash2,
 } from 'lucide-react'
 import type React from 'react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import type {
   DateQuestionType,
@@ -99,7 +99,9 @@ export const QuestionCreator: React.FC<QuestionCreatorProps> = ({
   const itemPath = `items.${itemIndex}`
   const questionData = watch(itemPath) as SurveyQuestionItemType
 
-  const questionLabel = questionData?.label || '新しい質問' // 'New Question'
+  const questionLabelValue =
+    questionData && 'label' in questionData ? questionData.label : undefined
+  const questionLabel = questionLabelValue || '新しい質問' // 'New Question'
   const questionType = questionData?.type
   const showOptions = ['single-choice', 'multiple-choice', 'dropdown'].includes(
     questionType
@@ -141,6 +143,13 @@ export const QuestionCreator: React.FC<QuestionCreatorProps> = ({
   })
 
   const isActive = activeElementId === questionId
+
+  // Sync question ID with question label
+  useEffect(() => {
+    if (questionLabelValue) {
+      setValue(`${itemPath}.id`, questionLabelValue)
+    }
+  }, [questionLabelValue, itemPath, setValue])
 
   const handleDuplicate = () => {
     const currentItemData = getValues(`items.${itemIndex}`)

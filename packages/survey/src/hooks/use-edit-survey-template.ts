@@ -67,7 +67,7 @@ export function useEditSurveyTemplate({
           toast.success(
             id ? 'アンケートが更新されました' : 'アンケートが作成されました' // Survey updated successfully / Survey created successfully
           )
-          router.push('/dashboard/survey-management')
+          router.push('/admin/survey-management')
         } else {
           toast.error(
             id

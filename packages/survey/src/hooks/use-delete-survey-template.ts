@@ -30,7 +30,7 @@ export function useDeleteSurveyTemplate({
         if (msg) {
           toast.success('アンケートテンプレートが削除されました') // Survey template deleted successfully
           onSuccess?.()
-          router.push('/dashboard/survey-management')
+          router.push('/admin/survey-management')
         } else {
           toast.error('アンケートテンプレートの削除に失敗しました') // Failed to delete survey template
         }
