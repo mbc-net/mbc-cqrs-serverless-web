@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.32](https://github.com/mbc-net/mbc-cqrs-serverless-web/compare/v0.0.31...v0.0.32) (2025-11-25)
+
+### Features
+
+- synchronize question ID with label and update routing paths to admin section ([53fe65c](https://github.com/mbc-net/mbc-cqrs-serverless-web/commit/53fe65cb015d312d2d7ae80ebc1547d46381116f))
+
 ## [0.0.31](https://github.com/mbc-net/mbc-cqrs-serverless-web/compare/v0.0.30...v0.0.31) (2025-11-19)
 
 **Note:** Version bump only for package @mbc-cqrs-serverless/survey-web
