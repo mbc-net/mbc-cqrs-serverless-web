@@ -69,7 +69,7 @@ export const DatePreview: React.FC<DatePreviewProps> = ({ questionData }) => {
         <div className="flex items-center gap-2">
           <Input
             disabled
-            placeholder="Time"
+            placeholder="時間" // "Time"
             className="border-0 border-b shadow-none"
           />
           <Clock className="text-muted-foreground h-5 w-5 bg-transparent" />
