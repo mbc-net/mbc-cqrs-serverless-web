@@ -67,7 +67,7 @@ const LongTextValidationBuilder: React.FC<{
                 <SelectTrigger className="w-[120px] border-0" size="xs">
                   <SelectValue
                     className="text-xs placeholder:text-xs"
-                    placeholder="Type..."
+                    placeholder="タイプ..." // "Type..."
                   />
                 </SelectTrigger>
                 <SelectContent>
@@ -95,7 +95,7 @@ const LongTextValidationBuilder: React.FC<{
                 <SelectTrigger className="w-[180px] border-0" size="xs">
                   <SelectValue
                     className="text-xs placeholder:text-xs"
-                    placeholder="Rule..."
+                    placeholder="ルール..." // "Rule..."
                   />
                 </SelectTrigger>
                 <SelectContent>
@@ -123,7 +123,7 @@ const LongTextValidationBuilder: React.FC<{
                       </SelectItem>
                       <SelectItem value="matches">
                         {/* Matches */}
-                        一致
+                        一致する
                       </SelectItem>
                       <SelectItem value="not_matches">
                         {/* Doesn't match */}
