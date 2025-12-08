@@ -33,11 +33,6 @@ export const TimeQuestionComponent: React.FC<{
     () => Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, '0')),
     []
   )
-  const timeHourOptions = useMemo(
-    () =>
-      Array.from({ length: 12 }, (_, i) => (i + 1).toString().padStart(2, '0')),
-    []
-  )
 
   return (
     <Controller
@@ -46,7 +41,7 @@ export const TimeQuestionComponent: React.FC<{
       defaultValue={
         question.answerType === 'duration'
           ? { hours: '', minutes: '', seconds: '' }
-          : { hour: '', minute: '', period: 'AM' }
+          : { hour: '', minute: '' }
       }
       rules={{
         validate: (value) => {
@@ -62,9 +57,7 @@ export const TimeQuestionComponent: React.FC<{
               : 'この項目は必須です' // This field is required
           }
           // 'time' answer type
-          return value.hour && value.minute && value.period
-            ? true
-            : 'この項目は必須です' // This field is required
+          return value.hour && value.minute ? true : 'この項目は必須です' // This field is required
         },
       }}
       render={({ field }) => (
@@ -145,11 +138,11 @@ export const TimeQuestionComponent: React.FC<{
                     field.onChange({ ...field.value, hour: value })
                   }
                 >
-                  <SelectTrigger className="w-20">
+                  <SelectTrigger className="w-full max-w-[120px] justify-between bg-white">
                     <SelectValue placeholder="時" />
                   </SelectTrigger>
                   <SelectContent className="max-h-60 overflow-y-auto">
-                    {timeHourOptions.map((hour) => (
+                    {hourOptions.map((hour) => (
                       <SelectItem key={hour} value={hour}>
                         {hour}
                       </SelectItem>
@@ -157,7 +150,7 @@ export const TimeQuestionComponent: React.FC<{
                   </SelectContent>
                 </Select>
               </div>
-              <span className="text-muted-foreground">:</span>
+              <span className="mr-8 font-normal text-gray-500">時</span>
               <div>
                 <Select
                   value={field.value?.minute || ''}
@@ -165,7 +158,7 @@ export const TimeQuestionComponent: React.FC<{
                     field.onChange({ ...field.value, minute: value })
                   }
                 >
-                  <SelectTrigger className="w-20">
+                  <SelectTrigger className="w-full max-w-[120px] justify-between bg-white">
                     <SelectValue placeholder="分" />
                   </SelectTrigger>
                   <SelectContent className="max-h-60 overflow-y-auto">
@@ -177,22 +170,7 @@ export const TimeQuestionComponent: React.FC<{
                   </SelectContent>
                 </Select>
               </div>
-              <div>
-                <Select
-                  value={field.value?.period || 'AM'}
-                  onValueChange={(p) =>
-                    field.onChange({ ...field.value, period: p })
-                  }
-                >
-                  <SelectTrigger className="w-[80px]">
-                    <SelectValue placeholder="AM/PM" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="AM">AM</SelectItem>
-                    <SelectItem value="PM">PM</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              <span className="font-normal text-gray-500">分</span>
             </div>
           )}
         </QuestionWrapper>
