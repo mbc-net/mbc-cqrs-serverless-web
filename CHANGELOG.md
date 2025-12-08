@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.33](https://github.com/mbc-net/mbc-cqrs-serverless-web/compare/v0.0.32...v0.0.33) (2025-12-08)
+
+### Features
+
+- localize long text validation options and placeholders in Japanese ([12c7067](https://github.com/mbc-net/mbc-cqrs-serverless-web/commit/12c7067bad5a88181a842402510875c9526aabe3))
+- localize placeholders in date and linear scale creators to Japanese and adjust date time ([e05bf75](https://github.com/mbc-net/mbc-cqrs-serverless-web/commit/e05bf75890088148520fd73c399267efd2cdf793))
+- localize short text validation options and placeholders in Japanese ([9efa706](https://github.com/mbc-net/mbc-cqrs-serverless-web/commit/9efa706989bf8be63413f34250fe7f69a308801c))
+
 ## [0.0.32](https://github.com/mbc-net/mbc-cqrs-serverless-web/compare/v0.0.31...v0.0.32) (2025-11-25)
 
 ### Features

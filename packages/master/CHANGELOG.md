@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.33](https://github.com/mbc-net/mbc-cqrs-serverless-web/compare/v0.0.32...v0.0.33) (2025-12-08)
+
+**Note:** Version bump only for package @mbc-cqrs-serverless/master-web
+
 ## [0.0.32](https://github.com/mbc-net/mbc-cqrs-serverless-web/compare/v0.0.31...v0.0.32) (2025-11-25)
 
 **Note:** Version bump only for package @mbc-cqrs-serverless/master-web
