@@ -38,7 +38,7 @@ const TimePicker = ({ value, onTimeChange, disabled }: TimePickerProps) => {
   )
 
   return (
-    <div className="flex items-center gap-2 md:col-span-2">
+    <div className="flex items-center gap-2 md:col-span-1">
       {/* <ClockIcon className="h-5 w-5 text-gray-400" /> */}
       <Select
         onValueChange={(val) => onTimeChange('hours', val)}
@@ -164,14 +164,14 @@ const DateTimePickerWithYearControl = ({
 
   return (
     <div className="w-full space-y-4">
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
         <Popover modal>
           <PopoverTrigger asChild>
             <Button
               variant={'outline'}
               disabled={disabled}
               className={cn(
-                'w-full justify-start text-left font-normal',
+                'w-full justify-start text-left font-normal md:col-span-2',
                 !parsedDate && 'text-gray-400'
               )}
             >

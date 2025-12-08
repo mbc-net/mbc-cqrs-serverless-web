@@ -31,7 +31,7 @@ export const QuestionWrapper: React.FC<QuestionWrapperProps> = ({
     <div className="bg-card text-card-foreground focus-within:ring-ring mb-8 rounded-lg border p-6 shadow-sm transition-all duration-300 ease-in-out focus-within:ring-2">
       <Label
         htmlFor={questionId}
-        className="text-lg font-semibold leading-none tracking-tight"
+        className="text-lg font-semibold leading-relaxed tracking-tight"
       >
         {label}
         {isRequired && <span className="text-destructive ml-1">*</span>}

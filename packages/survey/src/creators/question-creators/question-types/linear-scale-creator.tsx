@@ -92,7 +92,7 @@ export const LinearScaleCreator: React.FC<LinearScaleCreatorProps> = ({
             {minValue}
           </span>
           <Input
-            placeholder="Label (optional)"
+            placeholder="ラベル（任意)" // "Label (optional)"
             className="max-w-[200px] rounded-none border-0 border-b text-xs shadow-none placeholder:text-xs focus-visible:ring-0"
             {...control.register(`${itemPath}.minLabel`)}
           />
@@ -102,7 +102,7 @@ export const LinearScaleCreator: React.FC<LinearScaleCreatorProps> = ({
             {maxValue}
           </span>
           <Input
-            placeholder="Label (optional)"
+            placeholder="ラベル（任意)" // "Label (optional)"
             className="max-w-[200px] rounded-none border-0 border-b text-xs shadow-none placeholder:text-xs focus-visible:ring-0"
             {...control.register(`${itemPath}.maxLabel`)}
           />

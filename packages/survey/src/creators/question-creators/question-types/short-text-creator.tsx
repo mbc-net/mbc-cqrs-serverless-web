@@ -184,23 +184,33 @@ const ShortTextValidationBuilder: React.FC<{
                   {validationRule?.type === 'length' && (
                     <>
                       <SelectItem className="text-xs" value="max">
-                        Max character count
+                        {/* Max character count */}
+                        最大文字数
                       </SelectItem>
                       <SelectItem className="text-xs" value="min">
-                        Min character count
+                        {/* Min character count */}
+                        最小文字数
                       </SelectItem>
                     </>
                   )}
                   {validationRule?.type === 'regex' && (
                     <>
                       <SelectItem className="text-xs" value="contains">
-                        Contains
+                        {/* Contains */}
+                        含む
                       </SelectItem>
                       <SelectItem className="text-xs" value="not_contains">
-                        Doesn't contain
+                        {/* Doesn't contain */}
+                        含まない
                       </SelectItem>
-                      <SelectItem value="matches">Matches</SelectItem>
-                      <SelectItem value="not_matches">Doesn't match</SelectItem>
+                      <SelectItem value="matches">
+                        {/* Matches */}
+                        一致する
+                      </SelectItem>
+                      <SelectItem value="not_matches">
+                        {/* Doesn't match */}
+                        一致しない
+                      </SelectItem>
                     </>
                   )}
                 </SelectContent>
@@ -219,17 +229,20 @@ const ShortTextValidationBuilder: React.FC<{
                   ? 'number'
                   : 'text'
               }
-              placeholder="Value" // "Value"
+              placeholder="値" // "Value"
               className="min-w-[80px] flex-grow rounded-none border-0 border-b px-1 text-xs shadow-none placeholder:text-xs focus-visible:ring-0"
               {...register(`${validationPath}.value`)}
             />
             {needsTwoValues && (
-              <Input
-                type="number"
-                placeholder="And"
-                className="min-w-[80px] flex-grow rounded-none border-0 border-b px-1 text-xs shadow-none placeholder:text-xs focus-visible:ring-0"
-                {...register(`${validationPath}.value2`)}
-              />
+              <>
+                ~
+                <Input
+                  type="number"
+                  placeholder="かつ" // "and"
+                  className="min-w-[80px] flex-grow rounded-none border-0 border-b px-1 text-xs shadow-none placeholder:text-xs focus-visible:ring-0"
+                  {...register(`${validationPath}.value2`)}
+                />
+              </>
             )}
           </div>
         )}
