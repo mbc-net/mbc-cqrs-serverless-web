@@ -12,6 +12,7 @@ export default defineConfig({
     EditSurveyTemplatePage:
       'src/modules/edit-survey-template/templates/index.tsx',
     SurveyForm: 'src/forms/survey-form.tsx',
+    SurveyCreator: 'src/creators/survey-creator.tsx',
   },
   format: ['cjs', 'esm'],
   dts: true,
