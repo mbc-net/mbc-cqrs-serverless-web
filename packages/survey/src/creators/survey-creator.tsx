@@ -88,8 +88,18 @@ export const SurveyCreator: React.FC<SurveyCreatorProps> = ({
     defaultValues: initialSchema || staticDefaultSurvey,
   })
 
-  const { control, register, handleSubmit, watch, reset, getValues, setValue } =
-    methods
+  const {
+    control,
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    getValues,
+    setValue,
+    formState: { errors },
+  } = methods
+
+  console.log('errors', errors)
 
   const {
     fields: items,
