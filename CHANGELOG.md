@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.34](https://github.com/mbc-net/mbc-cqrs-serverless-web/compare/v0.0.33...v0.0.34) (2025-12-12)
+
+### Bug Fixes
+
+- value number and do not export survey creator ([7865167](https://github.com/mbc-net/mbc-cqrs-serverless-web/commit/78651671c8fdace44ad4f3a75438396334cd4110))
+
+### Features
+
+- export survey creator ([d00659f](https://github.com/mbc-net/mbc-cqrs-serverless-web/commit/d00659f9c840b53fd5401d75d3cbc8a061b59018))
+
 ## [0.0.33](https://github.com/mbc-net/mbc-cqrs-serverless-web/compare/v0.0.32...v0.0.33) (2025-12-08)
 
 ### Features
