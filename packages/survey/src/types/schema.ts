@@ -43,8 +43,24 @@ const CustomValidationRuleSchema = z.discriminatedUnion('type', [
       'is_number',
       'is_whole',
     ]),
-    value: z.number().optional(),
-    value2: z.number().optional(),
+    value: z
+      .number()
+      .nullish()
+      .transform((val) =>
+        val === null || (typeof val === 'number' && Number.isNaN(val))
+          ? undefined
+          : val
+      )
+      .optional(),
+    value2: z
+      .number()
+      .nullish()
+      .transform((val) =>
+        val === null || (typeof val === 'number' && Number.isNaN(val))
+          ? undefined
+          : val
+      )
+      .optional(),
     customError: z.string().optional(),
   }),
   z.object({

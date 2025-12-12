@@ -39,11 +39,6 @@
       "import": "./dist/SurveyForm.mjs",
       "require": "./dist/SurveyForm.js"
     },
-    "./SurveyCreator": {
-      "types": "./dist/SurveyCreator.d.ts",
-      "import": "./dist/SurveyCreator.mjs",
-      "require": "./dist/SurveyCreator.js"
-    },
     "./styles.css": "./dist/styles.css"
   },
   "scripts": {

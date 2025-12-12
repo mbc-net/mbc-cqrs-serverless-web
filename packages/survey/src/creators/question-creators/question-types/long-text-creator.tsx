@@ -144,7 +144,16 @@ const LongTextValidationBuilder: React.FC<{
               type={validationRule?.type === 'length' ? 'number' : 'text'}
               placeholder="値" // "Value"
               className="min-w-[80px] flex-grow rounded-none border-0 border-b px-1 text-xs shadow-none placeholder:text-xs focus-visible:ring-0"
-              {...register(`${validationPath}.value`)}
+              {...register(`${validationPath}.value`, {
+                setValueAs: (value) => {
+                  if (validationRule?.type === 'length') {
+                    if (value === '' || value === null) return undefined
+                    const num = Number(value)
+                    return Number.isNaN(num) ? undefined : num
+                  }
+                  return value
+                },
+              })}
             />
           </div>
         )}
