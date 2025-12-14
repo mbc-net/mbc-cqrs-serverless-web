@@ -31,6 +31,9 @@ const ShortTextValidationBuilder: React.FC<{
   const handleTypeChange = (newType: string) => {
     let defaultRule: string
     switch (newType) {
+      case 'number':
+        defaultRule = 'is_number'
+        break
       case 'text':
         defaultRule = 'contains'
         break
