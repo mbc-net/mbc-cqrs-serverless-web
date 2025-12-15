@@ -10,6 +10,7 @@ import {
 } from '../../../ui/select'
 import { X } from 'lucide-react'
 import type React from 'react'
+import { useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import type { ShortTextQuestionType } from '../../../types/schema'
 
@@ -20,6 +21,19 @@ interface ShortTextCreatorProps {
   onCloseValidation: () => void
 }
 
+const getDefaultRuleForType = (type: string): string => {
+  switch (type) {
+    case 'text':
+      return 'contains'
+    case 'length':
+      return 'min'
+    case 'regex':
+      return 'matches'
+    default:
+      return 'eq'
+  }
+}
+
 const ShortTextValidationBuilder: React.FC<{
   itemPath: string
   onClose: () => void
@@ -28,25 +42,16 @@ const ShortTextValidationBuilder: React.FC<{
   const validationPath = `${itemPath}.validation.custom`
   const validationRule = watch(validationPath)
 
-  const handleTypeChange = (newType: string) => {
-    let defaultRule: string
-    switch (newType) {
-      case 'number':
-        defaultRule = 'is_number'
-        break
-      case 'text':
-        defaultRule = 'contains'
-        break
-      case 'length':
-        defaultRule = 'min'
-        break
-      case 'regex':
-        defaultRule = 'matches'
-        break
-      default:
-        defaultRule = 'eq'
-        break
+  // Set default rule when type is present but rule is empty
+  useEffect(() => {
+    if (validationRule?.type && !validationRule?.rule) {
+      const defaultRule = getDefaultRuleForType(validationRule.type)
+      setValue(`${validationPath}.rule`, defaultRule)
     }
+  }, [validationRule?.type, validationRule?.rule, setValue, validationPath])
+
+  const handleTypeChange = (newType: string) => {
+    const defaultRule = getDefaultRuleForType(newType)
     // Update the rule and clear other values that depend on it
     setValue(`${validationPath}.rule`, defaultRule)
     setValue(`${validationPath}.value`, undefined)

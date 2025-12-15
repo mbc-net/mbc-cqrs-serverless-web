@@ -10,6 +10,7 @@ import {
 } from '../../../ui/select'
 import { X } from 'lucide-react'
 import type React from 'react'
+import { useEffect } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import type { LongTextQuestionType } from '../../../types/schema'
 
@@ -20,6 +21,17 @@ interface LongTextCreatorProps {
   onCloseValidation: () => void
 }
 
+const getDefaultRuleForType = (type: string): string => {
+  switch (type) {
+    case 'length':
+      return 'min'
+    case 'regex':
+      return 'matches'
+    default:
+      return 'min'
+  }
+}
+
 const LongTextValidationBuilder: React.FC<{
   itemPath: string
   onClose: () => void
@@ -28,19 +40,16 @@ const LongTextValidationBuilder: React.FC<{
   const validationPath = `${itemPath}.validation.custom`
   const validationRule = watch(validationPath)
 
-  const handleTypeChange = (newType: string) => {
-    let defaultRule: string
-    switch (newType) {
-      case 'length':
-        defaultRule = 'min'
-        break
-      case 'regex':
-        defaultRule = 'matches'
-        break
-      default:
-        defaultRule = 'min'
-        break
+  // Set default rule when type is present but rule is empty
+  useEffect(() => {
+    if (validationRule?.type && !validationRule?.rule) {
+      const defaultRule = getDefaultRuleForType(validationRule.type)
+      setValue(`${validationPath}.rule`, defaultRule)
     }
+  }, [validationRule?.type, validationRule?.rule, setValue, validationPath])
+
+  const handleTypeChange = (newType: string) => {
+    const defaultRule = getDefaultRuleForType(newType)
     // Update the rule and clear other values that depend on it
     setValue(`${validationPath}.rule`, defaultRule)
     setValue(`${validationPath}.value`, undefined)

@@ -35,7 +35,7 @@ export const TimePreview: React.FC<TimePreviewProps> = () => {
   return (
     <div className="pointer-events-none flex w-1/2 items-center gap-2">
       <Input disabled placeholder="時間" /> {/* Time */}
-      <Clock className="text-muted-foreground h-5 w-5" /> {/* Clock */} 時計
+      <Clock className="text-muted-foreground h-5 w-5" /> {/* Clock */}
     </div>
   )
 }
