@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.36](https://github.com/mbc-net/mbc-cqrs-serverless-web/compare/v0.0.35...v0.0.36) (2025-12-15)
+
+### Bug Fixes
+
+- set default rule for short and long text creator ([fb98ef2](https://github.com/mbc-net/mbc-cqrs-serverless-web/commit/fb98ef2ef46ae789488d9b58470604d97dd313f0))
+
 ## [0.0.35](https://github.com/mbc-net/mbc-cqrs-serverless-web/compare/v0.0.34...v0.0.35) (2025-12-14)
 
 ### Features
