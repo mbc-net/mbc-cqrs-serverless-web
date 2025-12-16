@@ -177,7 +177,7 @@ export const SectionHeaderSchema = z
       ])
       .optional(),
   })
-  .strict()
+  .strip()
 
 /**
  * Schema for a 'short-text' question item.
@@ -186,7 +186,7 @@ export const SectionHeaderSchema = z
 export const ShortTextQuestionSchema = BaseQuestionSchema.extend({
   type: z.literal('short-text'),
   validation: ShortTextValidationSchema.optional(),
-}).strict()
+}).strip()
 
 /**
  * Schema for a 'long-text' (paragraph) question item.
@@ -195,7 +195,7 @@ export const ShortTextQuestionSchema = BaseQuestionSchema.extend({
 export const LongTextQuestionSchema = BaseQuestionSchema.extend({
   type: z.literal('long-text'),
   validation: LongTextValidationSchema.optional(),
-}).strict()
+}).strip()
 
 /**
  * Schema for a 'linear-scale' question item.
@@ -208,7 +208,7 @@ export const LinearScaleQuestionSchema = BaseQuestionSchema.extend({
   minLabel: z.string().optional(),
   maxLabel: z.string().optional(),
   validation: LinearScaleValidationSchema.optional(),
-}).strict()
+}).strip()
 
 /**
  * Schema for a 'single-choice' question item.
@@ -219,7 +219,7 @@ export const SingleChoiceQuestionSchema = BaseQuestionSchema.extend({
     .array(QuestionOptionSchema)
     .min(1, 'Single-choice questions must have at least one option.'),
   validation: SingleChoiceValidationSchema.optional(),
-}).strict()
+}).strip()
 
 /**
  * Schema for a 'multiple-choice' question item.
@@ -230,7 +230,7 @@ export const MultipleChoiceQuestionSchema = BaseQuestionSchema.extend({
     .array(QuestionOptionSchema.omit({ nextSectionId: true }))
     .min(1, 'Multiple-choice questions must have at least one option.'),
   validation: MultipleChoiceValidationSchema.optional(),
-}).strict()
+}).strip()
 
 /**
  * Schema for a 'dropdown' question item.
@@ -241,7 +241,7 @@ export const DropdownQuestionSchema = BaseQuestionSchema.extend({
     .array(QuestionOptionSchema)
     .min(1, 'Dropdown questions must have at least one option.'),
   validation: DropdownValidationSchema.optional(),
-}).strict()
+}).strip()
 
 /**
  * Schema for a 'rating' question item.
@@ -251,7 +251,7 @@ export const RatingQuestionSchema = BaseQuestionSchema.extend({
   levels: z.number().min(2).max(10).default(5),
   symbol: z.enum(['star', 'heart', 'thumb']).default('star'),
   validation: RatingValidationSchema.optional(),
-}).strict()
+}).strip()
 
 /**
  * Schema for a 'date' question item.
@@ -261,7 +261,7 @@ export const DateQuestionSchema = BaseQuestionSchema.extend({
   includeTime: z.boolean().optional().default(false),
   includeYear: z.boolean().optional().default(true),
   validation: DateValidationSchema.optional(),
-}).strict()
+}).strip()
 
 /**
  * --- ADDED: Schema for a 'time' question item ---
@@ -270,7 +270,7 @@ export const TimeQuestionSchema = BaseQuestionSchema.extend({
   type: z.literal('time'),
   answerType: z.enum(['time', 'duration']).default('time'),
   validation: TimeValidationSchema.optional(),
-}).strict()
+}).strip()
 
 // ============================================================================
 // MASTER UNION AND ROOT SURVEY SCHEMA
@@ -301,7 +301,7 @@ export const SurveySchema = z
     description: z.string().optional(),
     items: z.array(SurveyItemSchema),
   })
-  .strict()
+  .strip()
 
 // ============================================================================
 // INFERRED TYPESCRIPT TYPES

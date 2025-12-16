@@ -94,7 +94,8 @@ export const QuestionCreator: React.FC<QuestionCreatorProps> = ({
   dndAttributes,
   dndListeners,
 }) => {
-  const { register, control, watch, getValues, setValue } = useFormContext()
+  const { register, control, watch, getValues, setValue, unregister } =
+    useFormContext()
 
   const itemPath = `items.${itemIndex}`
   const questionData = watch(itemPath) as SurveyQuestionItemType
@@ -191,6 +192,52 @@ export const QuestionCreator: React.FC<QuestionCreatorProps> = ({
     }
   }
 
+  // Remove previous type-specific fields to avoid unrecognized keys
+  const clearTypeSpecificFields = (
+    prevType: SurveyQuestionItemType['type'] | undefined
+  ) => {
+    if (!prevType) return
+
+    const clearFields = (fields: string[]) => {
+      fields.forEach((field) => {
+        unregister(`${itemPath}.${field}` as any)
+        setValue(`${itemPath}.${field}`, undefined)
+      })
+    }
+
+    // Always clear custom validation when changing type to avoid schema mismatch
+    setValue(`${itemPath}.validation.custom`, undefined)
+
+    switch (prevType) {
+      case 'rating':
+        clearFields(['levels', 'symbol'])
+        break
+      case 'linear-scale':
+        clearFields(['min', 'max', 'minLabel', 'maxLabel', 'levels', 'symbol'])
+        break
+      case 'single-choice':
+        clearFields(['options'])
+        setValue(`${itemPath}.validation.shuffleOptions`, undefined)
+        break
+      case 'multiple-choice':
+        clearFields(['options'])
+        setValue(`${itemPath}.validation.shuffleOptions`, undefined)
+        break
+      case 'dropdown':
+        clearFields(['options'])
+        setValue(`${itemPath}.validation.shuffleOptions`, undefined)
+        break
+      case 'date':
+        clearFields(['includeTime', 'includeYear'])
+        break
+      case 'time':
+        clearFields(['answerType'])
+        break
+      default:
+        break
+    }
+  }
+
   return (
     <div
       id={questionId}
@@ -230,15 +277,36 @@ export const QuestionCreator: React.FC<QuestionCreatorProps> = ({
               render={({ field }) => (
                 <Select
                   onValueChange={(newType) => {
+                    const prevType = field.value
                     // First, update the type
                     field.onChange(newType)
 
+                    // Clear fields that belong to the previous type
+                    if (prevType && prevType !== newType) {
+                      clearTypeSpecificFields(prevType)
+                    }
+
                     // When switching to a new type, set its default properties
-                    if (newType === 'date') {
-                      setValue(`${itemPath}.includeTime`, false)
-                      setValue(`${itemPath}.includeYear`, true)
-                    } else if (newType === 'time') {
-                      setValue(`${itemPath}.answerType`, 'time')
+                    switch (newType) {
+                      case 'date':
+                        setValue(`${itemPath}.includeTime`, false)
+                        setValue(`${itemPath}.includeYear`, true)
+                        break
+                      case 'time':
+                        setValue(`${itemPath}.answerType`, 'time')
+                        break
+                      case 'rating':
+                        setValue(`${itemPath}.levels`, 5)
+                        setValue(`${itemPath}.symbol`, 'star')
+                        break
+                      case 'linear-scale':
+                        setValue(`${itemPath}.min`, 1)
+                        setValue(`${itemPath}.max`, 5)
+                        setValue(`${itemPath}.minLabel`, undefined)
+                        setValue(`${itemPath}.maxLabel`, undefined)
+                        break
+                      default:
+                        break
                     }
                   }}
                   value={field.value}
