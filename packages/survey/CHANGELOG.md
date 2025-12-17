@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.37](https://github.com/mbc-net/mbc-cqrs-serverless-web/compare/v0.0.36...v0.0.37) (2025-12-17)
+
+### Features
+
+- implement type-specific field clearing in QuestionCreator ([6524fbd](https://github.com/mbc-net/mbc-cqrs-serverless-web/commit/6524fbdc6a8b5f8ce8385f421469b1d3a48fa2d9))
+- japanese text, other option and css ([0f89d1d](https://github.com/mbc-net/mbc-cqrs-serverless-web/commit/0f89d1d40fbcde0604f74e69ef15ee49cd2aeaf0))
+
 ## [0.0.36](https://github.com/mbc-net/mbc-cqrs-serverless-web/compare/v0.0.35...v0.0.36) (2025-12-15)
 
 ### Bug Fixes

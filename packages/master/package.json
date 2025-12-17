@@ -1,6 +1,6 @@
 {
   "name": "@mbc-cqrs-serverless/master-web",
-  "version": "0.0.36",
+  "version": "0.0.37",
   "private": false,
   "description": "Master components library for MBC CQRS Serverless Master Web",
   "keywords": [
