@@ -32,7 +32,7 @@ export const SectionActionCreator: React.FC<SectionActionCreatorProps> = ({
 
   return (
     <div className="mt-6 pb-6">
-      <div className="flex items-center gap-2">
+      <div className="flex min-w-0 items-center gap-2">
         <p className="text-muted-foreground flex-shrink-0 text-sm font-medium">
           {sectionNumber} セクション後 {/* After section */}
         </p>
@@ -67,11 +67,14 @@ export const SectionActionCreator: React.FC<SectionActionCreatorProps> = ({
                   }
                 }}
               >
-                <SelectTrigger className="w-auto border-0 bg-transparent p-1 shadow-none focus:ring-0 focus:ring-offset-0">
-                  <SelectValue placeholder="次のセクションに進む" />{' '}
+                <SelectTrigger className="min-w-0 max-w-[300px] flex-1 overflow-hidden border-0 bg-transparent p-1 shadow-none focus:ring-0 focus:ring-offset-0">
+                  <SelectValue
+                    placeholder="次のセクションに進む"
+                    className="block min-w-0 truncate"
+                  />{' '}
                   {/* Continue to next section */}
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="max-w-[380px]">
                   <SelectItem value="default">
                     次のセクションに進む {/* Continue to next section */}
                   </SelectItem>

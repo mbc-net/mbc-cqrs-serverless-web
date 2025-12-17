@@ -289,7 +289,7 @@ export const SurveyCreator: React.FC<SurveyCreatorProps> = ({
       const newSection: SectionHeaderType = {
         id: `sec_${Date.now()}`,
         type: 'section-header',
-        title: `Section ${
+        title: `セクション ${
           items.filter((i) => i.type === 'section-header').length + 1
         }`,
       }
@@ -312,7 +312,8 @@ export const SurveyCreator: React.FC<SurveyCreatorProps> = ({
   }
 
   const handlePreviewSubmit = (_answers: Record<string, any>) => {
-    alert('Preview submitted! Check the console for answers.')
+    console.log('answers', _answers)
+    alert('プレビューが送信されました！回答はコンソールを確認してください。') // Preview submitted! Check the console for answers.
     setIsPreviewOpen(false)
   }
 

@@ -15,6 +15,7 @@ const QuestionOptionSchema = z
     value: z.string().min(1, "Option 'value' cannot be empty."),
     label: z.string().min(1, "Option 'label' cannot be empty."),
     nextSectionId: z.string().optional(),
+    isOther: z.boolean().optional(),
   })
   .strict()
 

@@ -18,20 +18,29 @@ export const ShortTextQuestionComponent: React.FC<{
       control={control}
       rules={{
         required: question.validation?.required
-          ? 'この項目は必須です' // This field is required
+          ? 'この質問は必須です' // This question is required
           : false,
         validate: (inputValue: string) => {
           const rule = question.validation?.custom
           if (!rule) return true // No rule
           if (!inputValue) return true // Empty field
 
-          const error =
-            rule.customError || 'This response does not meet the criteria.'
+          // Get default error message based on rule type
+          let defaultError = 'この回答は要件を満たしていません。' // This response does not meet the criteria.
+          if (rule.type === 'text') {
+            defaultError = 'この回答は要件を満たしていません。' // This response does not meet the criteria.
+          } else if (rule.type === 'length') {
+            defaultError = '文字数が規定の長さに合致していません' // Character count does not match the specified length
+          } else if (rule.type === 'regex') {
+            defaultError = 'パターンに一致させてください' // Please match the pattern
+          }
+
+          const error = rule.customError || defaultError
 
           switch (rule.type) {
             case 'number': {
               const num = Number.parseFloat(inputValue)
-              if (Number.isNaN(num)) return 'Please enter a valid number.'
+              if (Number.isNaN(num)) return '有効な数値を入力してください。' // Please enter a valid number.
 
               switch (rule.rule) {
                 case 'gt':
@@ -153,7 +162,7 @@ export const ShortTextQuestionComponent: React.FC<{
           <Input
             {...field}
             id={question.id}
-            placeholder="ここに回答を入力してください..." // Type your answer here...
+            placeholder="回答を入力..." // Enter your answer...
           />
         </QuestionWrapper>
       )}

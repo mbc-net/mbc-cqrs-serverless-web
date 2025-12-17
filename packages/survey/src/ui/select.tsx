@@ -43,7 +43,7 @@ function SelectTrigger({
       )}
       {...props}
     >
-      {children}
+      <p className="truncate">{children}</p>
       <SelectPrimitive.Icon asChild>
         <ChevronDownIcon className="size-4 opacity-50" />
       </SelectPrimitive.Icon>

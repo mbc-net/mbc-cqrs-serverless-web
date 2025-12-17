@@ -82,7 +82,7 @@ const LongTextValidationBuilder: React.FC<{
                 <SelectContent>
                   <SelectItem className="text-xs" value="length">
                     {/* length  */}
-                    文字数
+                    長さ
                   </SelectItem>
                   <SelectItem className="text-xs" value="regex">
                     {/* regex  */}

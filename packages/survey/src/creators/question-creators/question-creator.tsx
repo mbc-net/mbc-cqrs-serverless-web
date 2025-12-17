@@ -334,7 +334,7 @@ export const QuestionCreator: React.FC<QuestionCreatorProps> = ({
                       <SelectItem value="single-choice">
                         <div className="flex items-center gap-2">
                           {/* Multiple choice */}
-                          <CircleDot className="h-4 w-4" /> 複数選択
+                          <CircleDot className="h-4 w-4" /> ラジオボタン
                         </div>
                       </SelectItem>
                       <SelectItem value="multiple-choice">
@@ -346,8 +346,7 @@ export const QuestionCreator: React.FC<QuestionCreatorProps> = ({
                       <SelectItem value="dropdown">
                         <div className="flex items-center gap-2">
                           {/* Dropdown */}
-                          <ChevronDownSquare className="h-4 w-4" />{' '}
-                          ドロップダウン
+                          <ChevronDownSquare className="h-4 w-4" /> プルダウン
                         </div>
                       </SelectItem>
                     </SelectGroup>
@@ -356,8 +355,7 @@ export const QuestionCreator: React.FC<QuestionCreatorProps> = ({
                       <SelectItem value="linear-scale">
                         <div className="flex items-center gap-2">
                           {/* Linear scale */}
-                          <BarChartHorizontal className="h-4 w-4" />{' '}
-                          線形スケール
+                          <BarChartHorizontal className="h-4 w-4" /> 均等目盛
                         </div>
                       </SelectItem>
                       <SelectItem value="rating">
@@ -646,7 +644,7 @@ export const QuestionCreator: React.FC<QuestionCreatorProps> = ({
                     >
                       <DropdownMenuRadioItem value="time">
                         {/* Time */}
-                        時間
+                        時刻
                       </DropdownMenuRadioItem>
                       <DropdownMenuRadioItem value="duration">
                         {/* Duration */}

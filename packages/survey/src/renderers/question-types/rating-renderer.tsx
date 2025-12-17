@@ -46,7 +46,7 @@ export const RatingQuestionComponent: React.FC<{
       control={control}
       rules={{
         required: question.validation?.required
-          ? 'この項目は必須です' // This field is required
+          ? 'この質問は必須です' // This question is required
           : false,
       }}
       render={({ field }) => (

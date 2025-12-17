@@ -49,26 +49,40 @@ interface SingleChoicePreviewProps {
 export const SingleChoicePreview: React.FC<SingleChoicePreviewProps> = ({
   questionData,
 }) => {
+  // Separate "Other" option from regular options
+  const regularOptions = (questionData.options || []).filter(
+    (opt) => !opt.isOther
+  )
+  const otherOption = (questionData.options || []).find((opt) => opt.isOther)
+
   // Show shuffled options in preview if shuffle is enabled
   const optionsToShow = (questionData as any).validation?.shuffleOptions
-    ? shuffleArray(questionData.options || [])
-    : questionData.options || []
+    ? shuffleArray(regularOptions)
+    : regularOptions
+
+  const displayCount = Math.min(3, optionsToShow.length)
+  const remainingCount = optionsToShow.length - displayCount
 
   return (
     <div className="space-y-2">
-      {optionsToShow.slice(0, 3).map((option) => (
+      {optionsToShow.slice(0, displayCount).map((option) => (
         <div key={option.value} className="flex items-center space-x-3">
           <div className="border-muted-foreground h-4 w-4 rounded-full border" />
           <p className="text-muted-foreground">{option.label}</p>
         </div>
       ))}
-      {questionData.options && questionData.options.length > 3 && (
+      {remainingCount > 0 && (
         <p className="text-muted-foreground text-sm">
-          {/* more options */}+{questionData.options.length - 3}{' '}
-          個の追加オプション
+          {/* more options */}+{remainingCount} 個の追加オプション
           {/* shuffled */}
           {(questionData as any).validation?.shuffleOptions && ' (シャッフル)'}
         </p>
+      )}
+      {otherOption && (
+        <div className="flex items-center space-x-3">
+          <div className="border-muted-foreground h-4 w-4 rounded-full border" />
+          <p className="text-muted-foreground">{otherOption.label}</p>
+        </div>
       )}
     </div>
   )

@@ -99,7 +99,7 @@ const ShortTextValidationBuilder: React.FC<{
                   </SelectItem>
                   <SelectItem className="text-xs" value="length">
                     {/* Length */}
-                    文字数
+                    長さ
                   </SelectItem>
                   <SelectItem className="text-xs" value="regex">
                     {/* Regex */}
@@ -161,7 +161,7 @@ const ShortTextValidationBuilder: React.FC<{
                       </SelectItem>
                       <SelectItem className="text-xs" value="is_number">
                         {/* Is number */}
-                        数値
+                        数字
                       </SelectItem>
                       <SelectItem className="text-xs" value="is_whole">
                         {/* Whole number */}
