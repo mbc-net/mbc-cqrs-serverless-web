@@ -133,15 +133,37 @@ export const ShortTextQuestionComponent: React.FC<{
             case 'regex': {
               try {
                 const regex = new RegExp(rule.value)
-                if (rule.rule === 'matches' && !regex.test(inputValue))
-                  return error
-                if (rule.rule === 'not_matches' && regex.test(inputValue))
-                  return error
-                // contains and not_contains for regex can be interpreted as test
-                if (rule.rule === 'contains' && !regex.test(inputValue))
-                  return error
-                if (rule.rule === 'not_contains' && regex.test(inputValue))
-                  return error
+
+                if (rule.rule === 'matches') {
+                  // For matches: ensure the entire string matches the pattern
+                  // Check if the regex matches AND the match covers the entire string
+                  const match = regex.exec(inputValue)
+                  if (!match || match[0] !== inputValue) {
+                    return error
+                  }
+                }
+
+                if (rule.rule === 'not_matches') {
+                  // For not_matches: the entire string should NOT match
+                  const match = regex.exec(inputValue)
+                  if (match && match[0] === inputValue) {
+                    return error
+                  }
+                }
+
+                if (rule.rule === 'contains') {
+                  // For contains: the pattern should be found anywhere in the string
+                  if (!regex.test(inputValue)) {
+                    return error
+                  }
+                }
+
+                if (rule.rule === 'not_contains') {
+                  // For not_contains: the pattern should NOT be found anywhere
+                  if (regex.test(inputValue)) {
+                    return error
+                  }
+                }
               } catch {
                 console.error('Invalid regex in survey schema:', rule.value)
                 return true // Don't block user for bad schema

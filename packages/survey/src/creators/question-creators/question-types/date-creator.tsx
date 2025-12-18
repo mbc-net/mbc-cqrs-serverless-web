@@ -15,7 +15,7 @@ export const DateCreator: React.FC<DateCreatorProps> = ({ itemPath }) => {
   const includeTime: boolean = watch(`${itemPath}.includeTime`)
   const includeYear: boolean = watch(`${itemPath}.includeYear`)
 
-  const datePlaceholder = ['月, 日', includeYear !== false && '年'] // 'Month, day', includeYear !== false && ', year'
+  const datePlaceholder = ['年月', includeYear !== false && '日'] // 'Month, day', includeYear !== false && ', year'
     .filter(Boolean)
     .join('')
 
@@ -48,10 +48,7 @@ interface DatePreviewProps {
 }
 
 export const DatePreview: React.FC<DatePreviewProps> = ({ questionData }) => {
-  const placeholder = [
-    'Month, day',
-    questionData.includeYear !== false && ', year',
-  ]
+  const placeholder = ['年月', questionData.includeYear !== false && '日']
     .filter(Boolean)
     .join('')
 

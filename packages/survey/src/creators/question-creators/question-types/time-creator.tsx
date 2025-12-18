@@ -18,7 +18,7 @@ export const TimeCreator: React.FC<TimeCreatorProps> = ({ itemPath }) => {
       <div className="flex items-center gap-2">
         <Input
           disabled
-          placeholder={answerType.charAt(0).toUpperCase() + answerType.slice(1)}
+          placeholder={answerType === 'time' ? '時刻' : '期間'}
           className="border-0 border-b shadow-none"
         />
         <Clock className="text-muted-foreground h-5 w-5 bg-transparent" />
@@ -34,7 +34,7 @@ interface TimePreviewProps {
 export const TimePreview: React.FC<TimePreviewProps> = () => {
   return (
     <div className="pointer-events-none flex w-1/2 items-center gap-2">
-      <Input disabled placeholder="時間" /> {/* Time */}
+      <Input disabled placeholder="時刻" /> {/* Time */}
       <Clock className="text-muted-foreground h-5 w-5" /> {/* Clock */}
     </div>
   )
