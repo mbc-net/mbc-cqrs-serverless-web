@@ -1,6 +1,6 @@
 {
   "name": "@mbc-cqrs-serverless/survey-web",
-  "version": "0.0.38",
+  "version": "0.0.39",
   "private": false,
   "description": "Survey components library for MBC CQRS Serverless Survey Web",
   "keywords": [

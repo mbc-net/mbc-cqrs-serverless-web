@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.39](https://github.com/mbc-net/mbc-cqrs-serverless-web/compare/v0.0.38...v0.0.39) (2025-12-18)
+
+### Bug Fixes
+
+- japanese text ([6b01d04](https://github.com/mbc-net/mbc-cqrs-serverless-web/commit/6b01d04383796374a13619bcb7663d575f674e8a))
+
+### Features
+
+- logic regex validate ([8d14b3c](https://github.com/mbc-net/mbc-cqrs-serverless-web/commit/8d14b3cf61d408b7fcb8cebc13598dd9a31e3e7d))
+
 ## [0.0.38](https://github.com/mbc-net/mbc-cqrs-serverless-web/compare/v0.0.37...v0.0.38) (2025-12-18)
 
 ### Features
