@@ -378,7 +378,7 @@ export const QuestionCreator: React.FC<QuestionCreatorProps> = ({
                       <SelectItem value="time">
                         <div className="flex items-center gap-2">
                           {/* Time */}
-                          <Clock className="h-4 w-4" /> 時間
+                          <Clock className="h-4 w-4" /> 時刻
                         </div>
                       </SelectItem>
                     </SelectGroup>
