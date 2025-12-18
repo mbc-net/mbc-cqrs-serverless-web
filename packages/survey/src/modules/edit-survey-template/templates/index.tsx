@@ -28,6 +28,7 @@ export function EditSurveyTemplatePage() {
     retryFetchSurvey,
     isButtonDisabled,
     submitButtonRef,
+    isSchemaChanged,
   } = useEditSurveyTemplate({ id })
 
   const { isDeleting, handleDeleteSurvey } = useDeleteSurveyTemplate()
@@ -78,6 +79,7 @@ export function EditSurveyTemplatePage() {
           isButtonDisabled={isButtonDisabled}
           onSubmit={() => submitButtonRef.current?.click()}
           onDelete={handleConfirmDelete}
+          isSchemaChanged={isSchemaChanged}
         />
       </div>
     </EditSurveyTemplateErrorBoundary>

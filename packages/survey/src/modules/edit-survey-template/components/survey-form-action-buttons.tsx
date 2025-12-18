@@ -24,6 +24,7 @@ interface SurveyFormActionButtonsProps {
   onSubmit: () => void
   onCancel?: () => void
   onDelete: () => void
+  isSchemaChanged: boolean
 }
 
 export function SurveyFormActionButtons({
@@ -34,16 +35,31 @@ export function SurveyFormActionButtons({
   onSubmit,
   onCancel,
   onDelete,
+  isSchemaChanged,
 }: SurveyFormActionButtonsProps) {
   const router = useRouter()
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  const [isCancelDialogOpen, setIsCancelDialogOpen] = useState(false)
 
   const handleBack = useCallback(() => {
+    if (isSchemaChanged) {
+      setIsCancelDialogOpen(true)
+    } else {
+      if (onCancel) {
+        onCancel()
+      } else {
+        router.back()
+      }
+    }
+  }, [isSchemaChanged, onCancel, router])
+
+  const handleConfirmCancel = useCallback(() => {
     if (onCancel) {
       onCancel()
     } else {
       router.back()
     }
+    setIsCancelDialogOpen(false)
   }, [onCancel, router])
 
   const handleDeleteClick = useCallback(() => {
@@ -58,16 +74,40 @@ export function SurveyFormActionButtons({
   return (
     <div className="mt-9 flex flex-row items-center justify-center gap-8 self-center">
       {/* Back/Cancel button */}
-      <Button
-        type="button"
-        size="lg"
-        className="flex items-center rounded-full border border-[#636F80] bg-[#EEEEEE] text-black hover:bg-[#B7BDC6]"
-        disabled={isSubmitting || isDeleting}
-        onClick={handleBack}
+      <AlertDialog
+        open={isCancelDialogOpen}
+        onOpenChange={setIsCancelDialogOpen}
       >
-        <Icon.Left className="!h-5 !w-5" />
-        {id ? 'キャンセル' : '戻る'}
-      </Button>
+        <Button
+          type="button"
+          size="lg"
+          className="flex items-center rounded-full border border-[#636F80] bg-[#EEEEEE] text-black hover:bg-[#B7BDC6]"
+          disabled={isSubmitting || isDeleting}
+          onClick={handleBack}
+        >
+          <Icon.Left className="!h-5 !w-5" />
+          戻る
+        </Button>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>変更を破棄しますか？</AlertDialogTitle>
+            <AlertDialogDescription>
+              未保存の変更があります。このページを離れると、変更内容が失われます。よろしいですか？
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isSubmitting || isDeleting}>
+              キャンセル
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmCancel}
+              disabled={isSubmitting || isDeleting}
+            >
+              OK
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Delete button */}
       {id && (
