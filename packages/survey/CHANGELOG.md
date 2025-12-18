@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.38](https://github.com/mbc-net/mbc-cqrs-serverless-web/compare/v0.0.37...v0.0.38) (2025-12-18)
+
+### Features
+
+- if schema change, back will show modal ([66e1085](https://github.com/mbc-net/mbc-cqrs-serverless-web/commit/66e10853bdf01fe606cf1275723cdaf7995a0a76))
+
 ## [0.0.37](https://github.com/mbc-net/mbc-cqrs-serverless-web/compare/v0.0.36...v0.0.37) (2025-12-17)
 
 ### Features
