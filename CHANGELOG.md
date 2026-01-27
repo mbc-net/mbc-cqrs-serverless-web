@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.40](https://github.com/mbc-net/mbc-cqrs-serverless-web/compare/v0.0.39...v0.0.40) (2026-01-27)
+
+### Features
+
+- enhance ReactQuill integration with custom block registration ([eece858](https://github.com/mbc-net/mbc-cqrs-serverless-web/commit/eece858a8b3e98d64b70af13abcdba53ca47b343))
+
 ## [0.0.39](https://github.com/mbc-net/mbc-cqrs-serverless-web/compare/v0.0.38...v0.0.39) (2025-12-18)
 
 ### Bug Fixes
