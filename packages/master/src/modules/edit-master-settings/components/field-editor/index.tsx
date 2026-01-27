@@ -13,7 +13,17 @@ const getDisabledState = (
   return !!disabled
 }
 
-const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false })
+const ReactQuill = dynamic(
+  async () => {
+    const RQ = await import('react-quill-new')
+    const { Quill } = RQ
+    const Block = Quill.import('blots/block') as any
+    Block.tagName = 'DIV'
+    Quill.register(Block, true)
+    return RQ
+  },
+  { ssr: false }
+)
 
 const QUILL_COLORS = [
   '#000000',
