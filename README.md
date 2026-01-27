@@ -50,6 +50,111 @@ This component renders a form that is **dynamically generated** based on the fie
 
 ---
 
+## Using the Library in Your Project
+
+When integrating this library into your own Next.js App Router project, follow the **Layout-based Provider Pattern** to avoid common issues like `httpClient.get is not a function`.
+
+### Quick Start
+
+1. **Install the package:**
+
+    ```bash
+    npm install @mbc-cqrs-serverless/master-web
+    ```
+
+2. **Create a layout file** (`app/admin/[tenant]/master/layout.tsx`):
+
+    ```tsx
+    'use client'
+
+    import { useMemo } from 'react'
+    import dynamic from 'next/dynamic'
+    import { useParams } from 'next/navigation'
+    import axios from 'axios'
+    import { fetchAuthSession } from 'aws-amplify/auth'
+    import type { IUrlProvider } from '@mbc-cqrs-serverless/master-web/UrlProvider'
+
+    const AppProviders = dynamic(
+      () => import('@mbc-cqrs-serverless/master-web/AppProviders').then((mod) => mod.AppProviders),
+      { ssr: false }
+    )
+
+    // Implement IUrlProvider for your application's routing
+    class MasterUrlProvider implements IUrlProvider {
+      // ... (define all required URL properties)
+    }
+
+    export default function MasterLayout({ children }: { children: React.ReactNode }) {
+      const params = useParams<{ tenant: string }>()
+      const tenantCode = params?.tenant || 'common'
+
+      const urlProvider = useMemo(() => new MasterUrlProvider(tenantCode), [tenantCode])
+
+      const httpClient = useMemo(() => {
+        const instance = axios.create({
+          baseURL: `${process.env.NEXT_PUBLIC_API_ENDPOINT}/api`,
+          headers: { 'Content-Type': 'application/json', 'x-tenant-code': tenantCode },
+        })
+
+        // Add interceptor for automatic auth token injection
+        instance.interceptors.request.use(async (config) => {
+          try {
+            const session = await fetchAuthSession()
+            const token = session.tokens?.idToken?.toString()
+            if (token) config.headers.Authorization = `Bearer ${token}`
+          } catch {}
+          return config
+        })
+
+        return instance
+      }, [tenantCode])
+
+      const user = useMemo(() => ({ tenantCode, tenantRole: 'admin' }), [tenantCode])
+
+      return (
+        <AppProviders user={user} urlProvider={urlProvider} httpClient={httpClient}>
+          {children}
+        </AppProviders>
+      )
+    }
+    ```
+
+3. **Create page files** with dynamic imports:
+
+    ```tsx
+    // app/admin/[tenant]/master/master-setting/page.tsx
+    'use client'
+
+    import dynamic from 'next/dynamic'
+    import MsLayout from '@mbc-cqrs-serverless/master-web/MsLayout'
+    import '@mbc-cqrs-serverless/master-web/styles.css'
+
+    const MasterSetting = dynamic(
+      () => import('@mbc-cqrs-serverless/master-web/MasterSetting').then((mod) => mod.default),
+      { ssr: false }
+    )
+
+    export default function MasterSettingPage() {
+      return (
+        <MsLayout useLoading>
+          <MasterSetting />
+        </MsLayout>
+      )
+    }
+    ```
+
+### Why This Pattern?
+
+- **Avoids Context Isolation**: React Context in npm packages can become isolated from the app's context. Setting up providers in a Layout ensures context is initialized before child components mount.
+- **Synchronous httpClient**: Using `useMemo` creates httpClient synchronously, avoiding race conditions.
+- **Automatic Auth Tokens**: Axios interceptors inject the latest auth token on every request.
+
+### Documentation
+
+For detailed documentation including all components, hooks, URL provider configuration, and troubleshooting, see the [official documentation](https://mbc-cqrs-serverless.mbc-net.com/docs/master-web).
+
+---
+
 ## Running the Demo Application
 
 The included Next.js application serves as a demonstration of the UI library's capabilities.

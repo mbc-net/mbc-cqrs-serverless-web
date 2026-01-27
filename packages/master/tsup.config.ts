@@ -23,6 +23,8 @@ export default defineConfig({
   clean: true,
   outDir: 'dist',
   publicDir: 'public',
+  // React、React DOM、Next.jsを外部化してコンテキスト分離問題を解決
+  external: ['react', 'react-dom', 'next', 'next/navigation', 'next/link'],
   loader: {
     '.css': 'css',
   },
