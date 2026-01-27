@@ -23,7 +23,8 @@ export default defineConfig({
   loader: {
     '.css': 'css',
   },
-  external: ['next', 'next/navigation', 'next/dynamic'],
+  // React、React DOM、Next.jsを外部化してコンテキスト分離問題を解決
+  external: ['react', 'react-dom', 'next', 'next/navigation', 'next/dynamic'],
   esbuildOptions(options) {
     options.jsx = 'transform'
     options.jsxFactory = 'React.createElement'
