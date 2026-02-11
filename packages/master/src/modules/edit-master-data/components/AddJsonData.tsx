@@ -25,8 +25,8 @@ function ModalContent({
   onCloseModal?: () => void
 }) {
   return (
-    <div className="flex w-full flex-col overflow-hidden">
-      <div className="mb-3 mt-5 flex-1">
+    <div className="flex h-full w-full flex-col overflow-hidden">
+      <div className="mb-3 mt-5 min-h-0 flex-1">
         <JSONEditorComponent
           text={value}
           onChangeText={(json) => setValue(json)}
