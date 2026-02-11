@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.42](https://github.com/mbc-net/mbc-cqrs-serverless-web/compare/v0.0.41...v0.0.42) (2026-02-11)
+
+### Bug Fixes
+
+- externalize React/Next.js to solve context isolation issue ([d61a5ad](https://github.com/mbc-net/mbc-cqrs-serverless-web/commit/d61a5adff19aa879a80f3120c811c11474d02530))
+- **master:** expand JSON editor to fill dialog area ([4662280](https://github.com/mbc-net/mbc-cqrs-serverless-web/commit/4662280dfbb9ec73a42dc178d52b23c02a2e57cf))
+- **master:** stabilize useSubscribeBulkCommandStatus ([17ee546](https://github.com/mbc-net/mbc-cqrs-serverless-web/commit/17ee546e9bfb922cbb47913bd7bc0063ca150f2f))
+
 ## [0.0.41](https://github.com/mbc-net/mbc-cqrs-serverless-web/compare/v0.0.40...v0.0.41) (2026-02-10)
 
 ### Features

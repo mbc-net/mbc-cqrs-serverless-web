@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.0.42](https://github.com/mbc-net/mbc-cqrs-serverless-web/compare/v0.0.41...v0.0.42) (2026-02-11)
+
+### Bug Fixes
+
+- **master:** stabilize useSubscribeBulkCommandStatus ([17ee546](https://github.com/mbc-net/mbc-cqrs-serverless-web/commit/17ee546e9bfb922cbb47913bd7bc0063ca150f2f))
+- **survey:** externalize React/React DOM to solve context isolation issue ([20e7994](https://github.com/mbc-net/mbc-cqrs-serverless-web/commit/20e7994028d75c37cae4e4bf645351d9758129ba))
+
 ## [0.0.41](https://github.com/mbc-net/mbc-cqrs-serverless-web/compare/v0.0.40...v0.0.41) (2026-02-10)
 
 **Note:** Version bump only for package @mbc-cqrs-serverless/survey-web
