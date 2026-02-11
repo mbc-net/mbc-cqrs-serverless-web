@@ -195,7 +195,7 @@ export function useSubscribeBulkCommandStatus(
         clearTimeout(timeoutId)
       }
     }
-  }, [reqId, appsyncClient, xTenantCode, timeoutMs, toast, stop])
+  }, [reqId])
 
   return {
     isListening: !!reqId,

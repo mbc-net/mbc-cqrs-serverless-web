@@ -47,8 +47,7 @@
     "build:watch": "tsup --watch",
     "dev": "tsup --watch",
     "lint": "tsc --noEmit",
-    "type-check": "tsc --noEmit",
-    "test": "node ./__tests__/survey.test.js"
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@apollo/client": "^3.13.1",
