@@ -1,6 +1,5 @@
 import React from 'react'
 import { renderHook, act } from '@testing-library/react'
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 
 import {
   useSubscribeCommandStatus,
@@ -10,12 +9,12 @@ import {
 // --- Mocks ---
 
 // Mock subscribeMessage to return a controllable subscription
-const mockUnsubscribe = vi.fn()
+const mockUnsubscribe = jest.fn()
 let subscribeHandler: ((message: any) => void) | null = null
 
-vi.mock('../../../appsync', () => ({
+jest.mock('../../../appsync', () => ({
   ActionEnum: { COMMAND_STATUS: 'command-status' },
-  subscribeMessage: vi.fn((_client, _filters, handler) => {
+  subscribeMessage: jest.fn((_client: any, _filters: any, handler: any) => {
     subscribeHandler = handler
     return { unsubscribe: mockUnsubscribe }
   }),
@@ -23,25 +22,25 @@ vi.mock('../../../appsync', () => ({
 
 // Mock useToast - mimics real behavior where useToast() returns a new object
 // each render (due to ...state spread), with an unstable dismiss function
-const mockToast = vi.fn()
-vi.mock('../../../components/ui/use-toast', () => ({
+const mockToast = jest.fn()
+jest.mock('../../../components/ui/use-toast', () => ({
   useToast: () => ({
     toast: mockToast,
     toasts: [],
     // Real use-toast.ts creates a new arrow function each call:
     //   dismiss: (toastId?) => dispatch({ type: 'DISMISS_TOAST', toastId })
-    dismiss: vi.fn(),
+    dismiss: jest.fn(),
   }),
 }))
 
 // Mock useApolloClient
 const mockApolloClient = {} as any
-vi.mock('../../../provider', () => ({
+jest.mock('../../../provider', () => ({
   useApolloClient: () => mockApolloClient,
 }))
 
 // Mock useIsomorphicLayoutEffect as useEffect for test environment
-vi.mock('usehooks-ts', () => ({
+jest.mock('usehooks-ts', () => ({
   useIsomorphicLayoutEffect: React.useEffect,
 }))
 
@@ -73,12 +72,12 @@ function createStartedMessage(reqId: string) {
 
 describe('useSubscribeCommandStatus', () => {
   beforeEach(() => {
-    vi.clearAllMocks()
+    jest.clearAllMocks()
     subscribeHandler = null
   })
 
   it('should not subscribe when reqId is not set', () => {
-    const doneCallback = vi.fn()
+    const doneCallback = jest.fn()
     const { result } = renderHook(() =>
       useSubscribeCommandStatus('test-tenant', doneCallback)
     )
@@ -88,7 +87,7 @@ describe('useSubscribeCommandStatus', () => {
   })
 
   it('should subscribe when start is called', () => {
-    const doneCallback = vi.fn()
+    const doneCallback = jest.fn()
     const { result } = renderHook(() =>
       useSubscribeCommandStatus('test-tenant', doneCallback)
     )
@@ -102,7 +101,7 @@ describe('useSubscribeCommandStatus', () => {
   })
 
   it('should call doneCallback on finish:FINISHED', () => {
-    const doneCallback = vi.fn()
+    const doneCallback = jest.fn()
     const { result } = renderHook(() =>
       useSubscribeCommandStatus('test-tenant', doneCallback)
     )
@@ -121,7 +120,7 @@ describe('useSubscribeCommandStatus', () => {
   })
 
   it('should ignore messages with different reqId', () => {
-    const doneCallback = vi.fn()
+    const doneCallback = jest.fn()
     const { result } = renderHook(() =>
       useSubscribeCommandStatus('test-tenant', doneCallback)
     )
@@ -140,7 +139,7 @@ describe('useSubscribeCommandStatus', () => {
   })
 
   it('should not re-subscribe on unrelated re-renders', () => {
-    const doneCallback = vi.fn()
+    const doneCallback = jest.fn()
     const { result, rerender } = renderHook(() =>
       useSubscribeCommandStatus('test-tenant', doneCallback)
     )
@@ -163,7 +162,7 @@ describe('useSubscribeCommandStatus', () => {
 
 describe('useSubscribeBulkCommandStatus', () => {
   beforeEach(() => {
-    vi.clearAllMocks()
+    jest.clearAllMocks()
     subscribeHandler = null
   })
 
@@ -332,8 +331,8 @@ describe('useSubscribeBulkCommandStatus', () => {
   })
 
   it('should call onTimeout when timeout fires', async () => {
-    vi.useFakeTimers()
-    const onTimeout = vi.fn()
+    jest.useFakeTimers()
+    const onTimeout = jest.fn()
 
     const { result } = renderHook(() =>
       useSubscribeBulkCommandStatus('test-tenant', onTimeout)
@@ -345,13 +344,13 @@ describe('useSubscribeBulkCommandStatus', () => {
 
     // Advance timer past timeout
     act(() => {
-      vi.advanceTimersByTime(5001)
+      jest.advanceTimersByTime(5001)
     })
 
     expect(onTimeout).toHaveBeenCalledTimes(1)
     expect(result.current.isListening).toBe(false)
 
-    vi.useRealTimers()
+    jest.useRealTimers()
   })
 
   /**
