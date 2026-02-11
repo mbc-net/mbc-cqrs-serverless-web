@@ -13,7 +13,17 @@ const getDisabledState = (
   return !!disabled
 }
 
-const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false })
+const ReactQuill = dynamic(
+  async () => {
+    const RQ = await import('react-quill-new')
+    const { Quill } = RQ
+    const Block = Quill.import('blots/block') as any
+    Block.tagName = 'DIV'
+    Quill.register(Block, true)
+    return RQ
+  },
+  { ssr: false }
+)
 
 const QUILL_COLORS = [
   '#000000',
@@ -54,12 +64,21 @@ const QUILL_COLORS = [
 ]
 
 const QUILL_MODULES = {
-  toolbar: [
-    ['bold', 'underline'],
-    [{ color: QUILL_COLORS }],
-    [{ background: QUILL_COLORS }],
-    ['link'],
-  ],
+	toolbar: [
+		[{ header: [1, 2, 3, 4, 5, 6, false] }],
+		[{ font: [] }],
+		[{ size: ['small', false, 'large', 'huge'] }],
+		['bold', 'italic', 'underline', 'strike'],
+		[{ color: QUILL_COLORS }],
+		[{ background: QUILL_COLORS }],
+		[{ script: 'sub' }, { script: 'super' }],
+		[{ list: 'ordered' }, { list: 'bullet' }, { list: 'check' }],
+		[{ indent: '-1' }, { indent: '+1' }],
+		[{ align: [] }],
+		['blockquote', 'code-block'],
+		['link', 'image', 'video'],
+		['clean'],
+	],
 }
 
 interface EditorProps {
