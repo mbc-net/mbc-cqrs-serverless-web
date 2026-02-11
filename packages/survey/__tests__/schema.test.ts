@@ -14,7 +14,7 @@ import {
 } from '../src/types/schema'
 
 describe('SectionHeaderSchema', () => {
-  it('accepts a valid section header', () => {
+  it('should accept a valid section header', () => {
     const result = SectionHeaderSchema.safeParse({
       id: 'section-1',
       type: 'section-header',
@@ -23,7 +23,7 @@ describe('SectionHeaderSchema', () => {
     expect(result.success).toBe(true)
   })
 
-  it('accepts a section header with description and action', () => {
+  it('should accept a section header with description and action', () => {
     const result = SectionHeaderSchema.safeParse({
       id: 'section-1',
       type: 'section-header',
@@ -34,7 +34,7 @@ describe('SectionHeaderSchema', () => {
     expect(result.success).toBe(true)
   })
 
-  it('accepts a section header with jump action', () => {
+  it('should accept a section header with jump action', () => {
     const result = SectionHeaderSchema.safeParse({
       id: 'section-1',
       type: 'section-header',
@@ -44,7 +44,7 @@ describe('SectionHeaderSchema', () => {
     expect(result.success).toBe(true)
   })
 
-  it('rejects a section header with empty id', () => {
+  it('should reject a section header with empty id', () => {
     const result = SectionHeaderSchema.safeParse({
       id: '',
       type: 'section-header',
@@ -53,7 +53,7 @@ describe('SectionHeaderSchema', () => {
     expect(result.success).toBe(false)
   })
 
-  it('rejects a section header with empty title', () => {
+  it('should reject a section header with empty title', () => {
     const result = SectionHeaderSchema.safeParse({
       id: 'section-1',
       type: 'section-header',
@@ -64,7 +64,7 @@ describe('SectionHeaderSchema', () => {
 })
 
 describe('ShortTextQuestionSchema', () => {
-  it('accepts a minimal short-text question', () => {
+  it('should accept a minimal short-text question', () => {
     const result = ShortTextQuestionSchema.safeParse({
       id: 'q1',
       type: 'short-text',
@@ -73,7 +73,7 @@ describe('ShortTextQuestionSchema', () => {
     expect(result.success).toBe(true)
   })
 
-  it('accepts short-text with number validation', () => {
+  it('should accept short-text with number validation', () => {
     const result = ShortTextQuestionSchema.safeParse({
       id: 'q1',
       type: 'short-text',
@@ -86,7 +86,7 @@ describe('ShortTextQuestionSchema', () => {
     expect(result.success).toBe(true)
   })
 
-  it('accepts short-text with text validation', () => {
+  it('should accept short-text with text validation', () => {
     const result = ShortTextQuestionSchema.safeParse({
       id: 'q1',
       type: 'short-text',
@@ -98,7 +98,7 @@ describe('ShortTextQuestionSchema', () => {
     expect(result.success).toBe(true)
   })
 
-  it('accepts short-text with length validation', () => {
+  it('should accept short-text with length validation', () => {
     const result = ShortTextQuestionSchema.safeParse({
       id: 'q1',
       type: 'short-text',
@@ -110,7 +110,7 @@ describe('ShortTextQuestionSchema', () => {
     expect(result.success).toBe(true)
   })
 
-  it('accepts short-text with regex validation', () => {
+  it('should accept short-text with regex validation', () => {
     const result = ShortTextQuestionSchema.safeParse({
       id: 'q1',
       type: 'short-text',
@@ -127,7 +127,7 @@ describe('ShortTextQuestionSchema', () => {
     expect(result.success).toBe(true)
   })
 
-  it('rejects short-text with empty id', () => {
+  it('should reject short-text with empty id', () => {
     const result = ShortTextQuestionSchema.safeParse({
       id: '',
       type: 'short-text',
@@ -138,7 +138,7 @@ describe('ShortTextQuestionSchema', () => {
 })
 
 describe('LongTextQuestionSchema', () => {
-  it('accepts a minimal long-text question', () => {
+  it('should accept a minimal long-text question', () => {
     const result = LongTextQuestionSchema.safeParse({
       id: 'q1',
       type: 'long-text',
@@ -147,7 +147,7 @@ describe('LongTextQuestionSchema', () => {
     expect(result.success).toBe(true)
   })
 
-  it('accepts long-text with length validation', () => {
+  it('should accept long-text with length validation', () => {
     const result = LongTextQuestionSchema.safeParse({
       id: 'q1',
       type: 'long-text',
@@ -160,7 +160,7 @@ describe('LongTextQuestionSchema', () => {
     expect(result.success).toBe(true)
   })
 
-  it('rejects long-text with number validation (not supported)', () => {
+  it('should reject long-text with number validation (not supported)', () => {
     const result = LongTextQuestionSchema.safeParse({
       id: 'q1',
       type: 'long-text',
@@ -174,7 +174,7 @@ describe('LongTextQuestionSchema', () => {
 })
 
 describe('LinearScaleQuestionSchema', () => {
-  it('accepts a minimal linear-scale question with defaults', () => {
+  it('should accept a minimal linear-scale question with defaults', () => {
     const result = LinearScaleQuestionSchema.safeParse({
       id: 'q1',
       type: 'linear-scale',
@@ -187,7 +187,7 @@ describe('LinearScaleQuestionSchema', () => {
     }
   })
 
-  it('accepts linear-scale with custom min/max and labels', () => {
+  it('should accept linear-scale with custom min/max and labels', () => {
     const result = LinearScaleQuestionSchema.safeParse({
       id: 'q1',
       type: 'linear-scale',
@@ -202,7 +202,7 @@ describe('LinearScaleQuestionSchema', () => {
 })
 
 describe('SingleChoiceQuestionSchema', () => {
-  it('accepts a valid single-choice question', () => {
+  it('should accept a valid single-choice question', () => {
     const result = SingleChoiceQuestionSchema.safeParse({
       id: 'q1',
       type: 'single-choice',
@@ -215,7 +215,7 @@ describe('SingleChoiceQuestionSchema', () => {
     expect(result.success).toBe(true)
   })
 
-  it('accepts single-choice with nextSectionId on options', () => {
+  it('should accept single-choice with nextSectionId on options', () => {
     const result = SingleChoiceQuestionSchema.safeParse({
       id: 'q1',
       type: 'single-choice',
@@ -228,7 +228,7 @@ describe('SingleChoiceQuestionSchema', () => {
     expect(result.success).toBe(true)
   })
 
-  it('rejects single-choice with no options', () => {
+  it('should reject single-choice with no options', () => {
     const result = SingleChoiceQuestionSchema.safeParse({
       id: 'q1',
       type: 'single-choice',
@@ -238,7 +238,7 @@ describe('SingleChoiceQuestionSchema', () => {
     expect(result.success).toBe(false)
   })
 
-  it('rejects options with empty value', () => {
+  it('should reject options with empty value', () => {
     const result = SingleChoiceQuestionSchema.safeParse({
       id: 'q1',
       type: 'single-choice',
@@ -250,7 +250,7 @@ describe('SingleChoiceQuestionSchema', () => {
 })
 
 describe('MultipleChoiceQuestionSchema', () => {
-  it('accepts a valid multiple-choice question', () => {
+  it('should accept a valid multiple-choice question', () => {
     const result = MultipleChoiceQuestionSchema.safeParse({
       id: 'q1',
       type: 'multiple-choice',
@@ -263,7 +263,7 @@ describe('MultipleChoiceQuestionSchema', () => {
     expect(result.success).toBe(true)
   })
 
-  it('accepts multiple-choice with custom validation', () => {
+  it('should accept multiple-choice with custom validation', () => {
     const result = MultipleChoiceQuestionSchema.safeParse({
       id: 'q1',
       type: 'multiple-choice',
@@ -280,7 +280,7 @@ describe('MultipleChoiceQuestionSchema', () => {
     expect(result.success).toBe(true)
   })
 
-  it('rejects multiple-choice with no options', () => {
+  it('should reject multiple-choice with no options', () => {
     const result = MultipleChoiceQuestionSchema.safeParse({
       id: 'q1',
       type: 'multiple-choice',
@@ -292,7 +292,7 @@ describe('MultipleChoiceQuestionSchema', () => {
 })
 
 describe('DropdownQuestionSchema', () => {
-  it('accepts a valid dropdown question', () => {
+  it('should accept a valid dropdown question', () => {
     const result = DropdownQuestionSchema.safeParse({
       id: 'q1',
       type: 'dropdown',
@@ -307,7 +307,7 @@ describe('DropdownQuestionSchema', () => {
 })
 
 describe('RatingQuestionSchema', () => {
-  it('accepts a minimal rating question with defaults', () => {
+  it('should accept a minimal rating question with defaults', () => {
     const result = RatingQuestionSchema.safeParse({
       id: 'q1',
       type: 'rating',
@@ -320,7 +320,7 @@ describe('RatingQuestionSchema', () => {
     }
   })
 
-  it('accepts rating with custom levels and symbol', () => {
+  it('should accept rating with custom levels and symbol', () => {
     const result = RatingQuestionSchema.safeParse({
       id: 'q1',
       type: 'rating',
@@ -331,7 +331,7 @@ describe('RatingQuestionSchema', () => {
     expect(result.success).toBe(true)
   })
 
-  it('rejects rating with levels out of range', () => {
+  it('should reject rating with levels out of range', () => {
     const result = RatingQuestionSchema.safeParse({
       id: 'q1',
       type: 'rating',
@@ -343,7 +343,7 @@ describe('RatingQuestionSchema', () => {
 })
 
 describe('DateQuestionSchema', () => {
-  it('accepts a minimal date question', () => {
+  it('should accept a minimal date question', () => {
     const result = DateQuestionSchema.safeParse({
       id: 'q1',
       type: 'date',
@@ -358,7 +358,7 @@ describe('DateQuestionSchema', () => {
 })
 
 describe('TimeQuestionSchema', () => {
-  it('accepts a minimal time question', () => {
+  it('should accept a minimal time question', () => {
     const result = TimeQuestionSchema.safeParse({
       id: 'q1',
       type: 'time',
@@ -370,7 +370,7 @@ describe('TimeQuestionSchema', () => {
     }
   })
 
-  it('accepts time question with duration type', () => {
+  it('should accept time question with duration type', () => {
     const result = TimeQuestionSchema.safeParse({
       id: 'q1',
       type: 'time',
@@ -382,7 +382,7 @@ describe('TimeQuestionSchema', () => {
 })
 
 describe('SurveySchema', () => {
-  it('accepts a valid complete survey', () => {
+  it('should accept a valid complete survey', () => {
     const result = SurveySchema.safeParse({
       title: 'Customer Feedback',
       description: 'Please share your experience',
@@ -412,7 +412,7 @@ describe('SurveySchema', () => {
     expect(result.success).toBe(true)
   })
 
-  it('accepts a survey with empty items', () => {
+  it('should accept a survey with empty items', () => {
     const result = SurveySchema.safeParse({
       title: 'Empty Survey',
       items: [],
@@ -420,7 +420,7 @@ describe('SurveySchema', () => {
     expect(result.success).toBe(true)
   })
 
-  it('rejects a survey with empty title', () => {
+  it('should reject a survey with empty title', () => {
     const result = SurveySchema.safeParse({
       title: '',
       items: [],
@@ -428,14 +428,14 @@ describe('SurveySchema', () => {
     expect(result.success).toBe(false)
   })
 
-  it('rejects a survey with missing title', () => {
+  it('should reject a survey with missing title', () => {
     const result = SurveySchema.safeParse({
       items: [],
     })
     expect(result.success).toBe(false)
   })
 
-  it('rejects a survey with invalid item type', () => {
+  it('should reject a survey with invalid item type', () => {
     const result = SurveySchema.safeParse({
       title: 'Test',
       items: [{ id: 'q1', type: 'unknown-type', label: 'Test' }],
@@ -443,7 +443,7 @@ describe('SurveySchema', () => {
     expect(result.success).toBe(false)
   })
 
-  it('strips unknown properties', () => {
+  it('should strip unknown properties', () => {
     const result = SurveySchema.safeParse({
       title: 'Test',
       items: [],
@@ -459,7 +459,7 @@ describe('SurveySchema', () => {
 })
 
 describe('validateSurveyJson', () => {
-  it('returns success for valid survey data', () => {
+  it('should return success for valid survey data', () => {
     const result = validateSurveyJson({
       title: 'Test Survey',
       items: [],
@@ -468,18 +468,18 @@ describe('validateSurveyJson', () => {
     expect(result.data).toBeDefined()
   })
 
-  it('returns error for invalid survey data', () => {
+  it('should return error for invalid survey data', () => {
     const result = validateSurveyJson({})
     expect(result.success).toBe(false)
     expect(result.error).toBeDefined()
   })
 
-  it('returns error for non-object input', () => {
+  it('should return error for non-object input', () => {
     const result = validateSurveyJson('not an object')
     expect(result.success).toBe(false)
   })
 
-  it('returns error for null input', () => {
+  it('should return error for null input', () => {
     const result = validateSurveyJson(null)
     expect(result.success).toBe(false)
   })

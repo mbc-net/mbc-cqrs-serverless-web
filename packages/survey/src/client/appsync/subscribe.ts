@@ -62,7 +62,7 @@ export function subscribeMessage(
   })
 }
 
-function parseContent(content: string): MessageContent {
+export function parseContent(content: string): MessageContent {
   try {
     return JSON.parse(content)
   } catch (error) {
