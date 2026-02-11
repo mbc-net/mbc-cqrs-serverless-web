@@ -14,221 +14,172 @@ import {
 } from '../validation'
 
 describe('hankakuNum', () => {
-  it('should return true for null/empty', () => {
-    expect(hankakuNum(null)).toBe(true)
-    expect(hankakuNum('')).toBe(true)
-  })
-
-  it('should return true for digits and commas', () => {
-    expect(hankakuNum('12345')).toBe(true)
-    expect(hankakuNum('1,000')).toBe(true)
-  })
-
-  it('should return false for non-numeric', () => {
-    expect(hankakuNum('abc')).toBe(false)
-    expect(hankakuNum('12.5')).toBe(false)
+  it.each([
+    [null, true, 'null'],
+    ['', true, 'empty string'],
+    ['12345', true, 'digits only'],
+    ['1,000', true, 'digits with comma'],
+    ['abc', false, 'alphabetic'],
+    ['12.5', false, 'decimal'],
+  ])('returns %s for %s', (input, expected) => {
+    expect(hankakuNum(input)).toBe(expected)
   })
 })
 
 describe('hankakuEisu', () => {
-  it('should return true for null/empty', () => {
-    expect(hankakuEisu(null)).toBe(true)
-  })
-
-  it('should return true for alphanumeric', () => {
-    expect(hankakuEisu('abc123')).toBe(true)
-    expect(hankakuEisu('Hello World')).toBe(true)
-  })
-
-  it('should return false for non-alphanumeric', () => {
-    expect(hankakuEisu('abc!')).toBe(false)
-    expect(hankakuEisu('あ')).toBe(false)
+  it.each([
+    [null, true, 'null'],
+    ['abc123', true, 'alphanumeric'],
+    ['Hello World', true, 'alphanumeric with space'],
+    ['abc!', false, 'with special character'],
+    ['あ', false, 'full-width character'],
+  ])('returns %s for %s', (input, expected) => {
+    expect(hankakuEisu(input)).toBe(expected)
   })
 })
 
 describe('hankakuEisuKigo', () => {
-  it('should return true for alphanumeric and symbols', () => {
-    expect(hankakuEisuKigo('abc123!@#')).toBe(true)
-  })
-
-  it('should return false for full-width', () => {
-    expect(hankakuEisuKigo('あ')).toBe(false)
+  it.each([
+    ['abc123!@#', true, 'alphanumeric and symbols'],
+    ['あ', false, 'full-width character'],
+  ])('returns %s for %s', (input, expected) => {
+    expect(hankakuEisuKigo(input)).toBe(expected)
   })
 })
 
 describe('tel', () => {
-  it('should return true for null/empty', () => {
-    expect(tel(null)).toBe(true)
-    expect(tel('')).toBe(true)
-  })
-
-  it('should return true for valid phone numbers', () => {
-    expect(tel('03-1234-5678')).toBe(true)
-    expect(tel('090-1234-5678')).toBe(true)
-  })
-
-  it('should return false for too short numbers', () => {
-    expect(tel('123')).toBe(false)
+  it.each([
+    [null, true, 'null'],
+    ['', true, 'empty string'],
+    ['03-1234-5678', true, 'landline number'],
+    ['090-1234-5678', true, 'mobile number'],
+    ['123', false, 'too short number'],
+  ])('returns %s for %s', (input, expected) => {
+    expect(tel(input)).toBe(expected)
   })
 })
 
 describe('email', () => {
-  it('should return true for null/empty', () => {
-    expect(email(null)).toBe(true)
-    expect(email('')).toBe(true)
-  })
-
-  it('should return true for valid emails', () => {
-    expect(email('test@example.com')).toBe(true)
-    expect(email('user+tag@domain.co.jp')).toBe(true)
-  })
-
-  it('should return false for invalid emails', () => {
-    expect(email('notanemail')).toBe(false)
-    expect(email('@domain.com')).toBe(false)
+  it.each([
+    [null, true, 'null'],
+    ['', true, 'empty string'],
+    ['test@example.com', true, 'standard email'],
+    ['user+tag@domain.co.jp', true, 'email with plus tag'],
+    ['user.name@domain.com', true, 'dotted local part'],
+    ['a@sub.domain.co.jp', true, 'subdomain email'],
+    ['notanemail', false, 'no at sign'],
+    ['@domain.com', false, 'missing local part'],
+    ['user@', false, 'missing domain'],
+  ])('returns %s for %s', (input, expected) => {
+    expect(email(input)).toBe(expected)
   })
 })
 
 describe('emailMultiple', () => {
-  it('should return true for null/empty', () => {
-    expect(emailMultiple(null)).toBe(true)
-  })
-
-  it('should return true for multiple valid emails', () => {
-    expect(emailMultiple('a@b.com,c@d.com')).toBe(true)
-  })
-
-  it('should return false if any email is invalid', () => {
-    expect(emailMultiple('a@b.com,invalid')).toBe(false)
+  it.each([
+    [null, true, 'null'],
+    ['a@b.com,c@d.com', true, 'multiple valid emails'],
+    ['a@b.com,invalid', false, 'one invalid email'],
+  ])('returns %s for %s', (input, expected) => {
+    expect(emailMultiple(input)).toBe(expected)
   })
 })
 
 describe('url', () => {
-  it('should return true for null/empty', () => {
-    expect(url(null)).toBe(true)
-  })
-
-  it('should return true for valid URLs', () => {
-    expect(url('https://example.com')).toBe(true)
-    expect(url('http://localhost:3000')).toBe(true)
-  })
-
-  it('should return false for invalid URLs', () => {
-    expect(url('not a url')).toBe(false)
-    expect(url('ftp://example.com')).toBe(false)
+  it.each([
+    [null, true, 'null'],
+    ['https://example.com', true, 'HTTPS URL'],
+    ['http://localhost:3000', true, 'localhost URL'],
+    ['https://example.com:8080/path', true, 'URL with port'],
+    ['https://example.com/path?q=1&r=2', true, 'URL with query string'],
+    ['https://example.com#section', true, 'URL with hash'],
+    ['not a url', false, 'plain text'],
+    ['ftp://example.com', false, 'FTP URL'],
+  ])('returns %s for %s', (input, expected) => {
+    expect(url(input)).toBe(expected)
   })
 })
 
 describe('date', () => {
-  it('should return true for null/empty', () => {
-    expect(date(null)).toBe(true)
-    expect(date('')).toBe(true)
-  })
-
-  it('should return true for YYYYMMDD format', () => {
-    expect(date('20240101')).toBe(true)
-    expect(date('20241231')).toBe(true)
-  })
-
-  it('should return true for ISO date string', () => {
-    expect(date('2024-01-01')).toBe(true)
-  })
-
-  it('should return false for invalid dates', () => {
-    expect(date('20241301')).toBe(false) // month 13
-    expect(date('20240230')).toBe(false) // Feb 30
-    expect(date('abcdefgh')).toBe(false)
+  it.each([
+    [null, true, 'null'],
+    ['', true, 'empty string'],
+    ['20240101', true, 'YYYYMMDD format'],
+    ['20241231', true, 'year end date'],
+    ['2024-01-01', true, 'ISO date string'],
+    ['20240229', true, 'leap year Feb 29'],
+    ['20230229', false, 'non-leap year Feb 29'],
+    ['20241301', false, 'month 13'],
+    ['20240230', false, 'Feb 30'],
+    ['abcdefgh', false, 'non-date string'],
+    ['20240001', false, 'month 00'],
+  ])('returns %s for %s', (input, expected) => {
+    expect(date(input)).toBe(expected)
   })
 })
 
 describe('time', () => {
-  it('should return true for null/empty', () => {
-    expect(time(null)).toBe(true)
-    expect(time('')).toBe(true)
-  })
-
-  it('should return true for valid hhmmss', () => {
-    expect(time('000000')).toBe(true)
-    expect(time('235959')).toBe(true)
-    expect(time('120000')).toBe(true)
-  })
-
-  it('should return false for invalid time', () => {
-    expect(time('250000')).toBe(false)
-    expect(time('126000')).toBe(false)
-    expect(time('12')).toBe(false)
+  it.each([
+    [null, true, 'null'],
+    ['', true, 'empty string'],
+    ['000000', true, 'midnight'],
+    ['235959', true, 'end of day'],
+    ['120000', true, 'noon'],
+    ['250000', false, 'hour 25'],
+    ['126000', false, 'minute 60'],
+    ['12', false, 'too short'],
+    ['240000', false, 'hour 24'],
+    ['235960', false, 'second 60'],
+    ['1200', false, 'missing seconds'],
+  ])('returns %s for %s', (input, expected) => {
+    expect(time(input)).toBe(expected)
   })
 })
 
 describe('password', () => {
-  it('should return true for null/empty', () => {
-    expect(password(null)).toBe(true)
-    expect(password('')).toBe(true)
-  })
-
-  it('should return true for valid passwords', () => {
-    expect(password('abcd1234')).toBe(true)
-    expect(password('Pass1234')).toBe(true)
-  })
-
-  it('should return false for too short', () => {
-    expect(password('ab1')).toBe(false)
-  })
-
-  it('should return false for too long', () => {
-    expect(password('abcdefghij1234567')).toBe(false)
-  })
-
-  it('should return false for letters only', () => {
-    expect(password('abcdefgh')).toBe(false)
-  })
-
-  it('should return false for digits only', () => {
-    expect(password('12345678')).toBe(false)
-  })
-
-  it('should return false for special characters', () => {
-    expect(password('abcd123!')).toBe(false)
+  it.each([
+    [null, true, 'null'],
+    ['', true, 'empty string'],
+    ['abcd1234', true, 'valid mixed password'],
+    ['Pass1234', true, 'valid uppercase password'],
+    ['ab1', false, 'too short'],
+    ['abcdefghij1234567', false, 'too long'],
+    ['abcdefgh', false, 'letters only'],
+    ['12345678', false, 'digits only'],
+    ['abcd123!', false, 'special characters'],
+  ])('returns %s for %s', (input, expected) => {
+    expect(password(input)).toBe(expected)
   })
 })
 
 describe('ip', () => {
-  it('should return true for null/empty', () => {
-    expect(ip(null)).toBe(true)
-    expect(ip('')).toBe(true)
-  })
-
-  it('should return true for valid IPs', () => {
-    expect(ip('192.168.1.1')).toBe(true)
-    expect(ip('0.0.0.0')).toBe(true)
-    expect(ip('255.255.255.255')).toBe(true)
-  })
-
-  it('should return false for invalid IPs', () => {
-    expect(ip('256.0.0.1')).toBe(false)
-    expect(ip('1.2.3')).toBe(false)
-    expect(ip('abc.def.ghi.jkl')).toBe(false)
+  it.each([
+    [null, true, 'null'],
+    ['', true, 'empty string'],
+    ['192.168.1.1', true, 'private IP'],
+    ['0.0.0.0', true, 'all zeros'],
+    ['255.255.255.255', true, 'max IP'],
+    ['01.02.03.04', true, 'leading zero IP'],
+    ['256.0.0.1', false, 'octet > 255'],
+    ['1.2.3', false, 'only 3 octets'],
+    ['abc.def.ghi.jkl', false, 'alphabetic octets'],
+    ['::1', false, 'IPv6'],
+  ])('returns %s for %s', (input, expected) => {
+    expect(ip(input)).toBe(expected)
   })
 })
 
 describe('json', () => {
-  it('should return true for null/empty', () => {
-    expect(json(null)).toBe(true)
-    expect(json('')).toBe(true)
-  })
-
-  it('should return true for objects', () => {
-    expect(json({ key: 'value' })).toBe(true)
-    expect(json([])).toBe(true)
-  })
-
-  it('should return true for valid JSON strings', () => {
-    expect(json('{"key":"value"}')).toBe(true)
-    expect(json('[1,2,3]')).toBe(true)
-  })
-
-  it('should return false for invalid JSON strings', () => {
-    expect(json('{invalid}')).toBe(false)
-    expect(json('not json')).toBe(false)
+  it.each([
+    [null, true, 'null'],
+    ['', true, 'empty string'],
+    [{ key: 'value' }, true, 'object'],
+    [[], true, 'array'],
+    ['{"key":"value"}', true, 'valid JSON string'],
+    ['[1,2,3]', true, 'valid JSON array string'],
+    ['{invalid}', false, 'invalid JSON string'],
+    ['not json', false, 'plain text'],
+  ])('returns %s for %s', (input, expected) => {
+    expect(json(input)).toBe(expected)
   })
 })

@@ -9,65 +9,53 @@ import {
 } from '../validation'
 
 describe('isNumeric', () => {
-  it('should return true for numbers', () => {
-    expect(isNumeric(123)).toBe(true)
-    expect(isNumeric('456')).toBe(true)
-    expect(isNumeric(0)).toBe(true)
-    expect(isNumeric('0.5')).toBe(true)
-  })
-
-  it('should return false for non-numbers', () => {
-    expect(isNumeric('abc')).toBe(false)
-    expect(isNumeric(NaN)).toBe(false)
-    expect(isNumeric(Infinity)).toBe(false)
+  it.each([
+    [123, true, 'integer'],
+    ['456', true, 'numeric string'],
+    [0, true, 'zero'],
+    ['0.5', true, 'decimal string'],
+    ['-1', true, 'negative number string'],
+    ['1e10', true, 'scientific notation string'],
+    ['abc', false, 'alphabetic string'],
+    [NaN, false, 'NaN'],
+    [Infinity, false, 'Infinity'],
+    ['', false, 'empty string'],
+    [' ', false, 'space only'],
+  ])('returns %s for %s', (input, expected) => {
+    expect(isNumeric(input)).toBe(expected)
   })
 })
 
 describe('length', () => {
-  it('should return true for null/empty', () => {
-    expect(length(null, 5)).toBe(true)
-    expect(length('', 5)).toBe(true)
-  })
-
-  it('should return true when length matches', () => {
-    expect(length('hello', 5)).toBe(true)
-  })
-
-  it('should return false when length does not match', () => {
-    expect(length('hi', 5)).toBe(false)
-  })
-
-  it('should handle addComma option', () => {
-    expect(length('1,000', 4, true)).toBe(true) // "1000" has 4 chars
+  it.each([
+    [null, 5, false, true, 'null'],
+    ['', 5, false, true, 'empty string'],
+    ['hello', 5, false, true, 'matching length'],
+    ['hi', 5, false, false, 'non-matching length'],
+    ['1,000', 4, true, true, 'with addComma option'],
+  ])('returns %s for %s', (input, len, addComma, expected) => {
+    expect(length(input, len, addComma)).toBe(expected)
   })
 })
 
 describe('maxLength', () => {
-  it('should return true for null/empty', () => {
-    expect(maxLength(null, 5)).toBe(true)
-  })
-
-  it('should return true when within limit', () => {
-    expect(maxLength('hi', 5)).toBe(true)
-    expect(maxLength('hello', 5)).toBe(true)
-  })
-
-  it('should return false when exceeding limit', () => {
-    expect(maxLength('toolong', 5)).toBe(false)
+  it.each([
+    [null, 5, true, 'null'],
+    ['hi', 5, true, 'within limit'],
+    ['hello', 5, true, 'at limit'],
+    ['toolong', 5, false, 'exceeding limit'],
+  ])('returns %s for %s', (input, max, expected) => {
+    expect(maxLength(input, max)).toBe(expected)
   })
 })
 
 describe('regex', () => {
-  it('should return true for null/empty', () => {
-    expect(regex(null, /test/)).toBe(true)
-  })
-
-  it('should return true when value matches pattern', () => {
-    expect(regex('test123', /^test\d+$/)).toBe(true)
-  })
-
-  it('should return false when value does not match', () => {
-    expect(regex('hello', /^test\d+$/)).toBe(false)
+  it.each([
+    [null, /test/, true, 'null'],
+    ['test123', /^test\d+$/, true, 'matching pattern'],
+    ['hello', /^test\d+$/, false, 'non-matching pattern'],
+  ])('returns %s for %s', (input, pattern, expected) => {
+    expect(regex(input, pattern)).toBe(expected)
   })
 })
 
@@ -77,56 +65,37 @@ describe('compareValue', () => {
     expect(compareValue(5, null, CompareType.eq)).toBe(true)
   })
 
-  it('should compare eq', () => {
-    expect(compareValue(5, 5, CompareType.eq)).toBe(true)
-    expect(compareValue(5, 6, CompareType.eq)).toBe(false)
-  })
-
-  it('should compare ne', () => {
-    expect(compareValue(5, 6, CompareType.ne)).toBe(true)
-    expect(compareValue(5, 5, CompareType.ne)).toBe(false)
-  })
-
-  it('should compare lt', () => {
-    expect(compareValue(3, 5, CompareType.lt)).toBe(true)
-    expect(compareValue(5, 3, CompareType.lt)).toBe(false)
-  })
-
-  it('should compare le', () => {
-    expect(compareValue(5, 5, CompareType.le)).toBe(true)
-    expect(compareValue(6, 5, CompareType.le)).toBe(false)
-  })
-
-  it('should compare gt', () => {
-    expect(compareValue(5, 3, CompareType.gt)).toBe(true)
-    expect(compareValue(3, 5, CompareType.gt)).toBe(false)
-  })
-
-  it('should compare ge', () => {
-    expect(compareValue(5, 5, CompareType.ge)).toBe(true)
-    expect(compareValue(3, 5, CompareType.ge)).toBe(false)
+  it.each([
+    [5, 5, CompareType.eq, true, 'eq: equal values'],
+    [5, 6, CompareType.eq, false, 'eq: different values'],
+    [5, 6, CompareType.ne, true, 'ne: different values'],
+    [5, 5, CompareType.ne, false, 'ne: equal values'],
+    [3, 5, CompareType.lt, true, 'lt: less than'],
+    [5, 3, CompareType.lt, false, 'lt: greater than'],
+    [5, 5, CompareType.le, true, 'le: equal'],
+    [6, 5, CompareType.le, false, 'le: greater than'],
+    [5, 3, CompareType.gt, true, 'gt: greater than'],
+    [3, 5, CompareType.gt, false, 'gt: less than'],
+    [5, 5, CompareType.ge, true, 'ge: equal'],
+    [3, 5, CompareType.ge, false, 'ge: less than'],
+  ])('returns %s for %s', (a, b, type, expected) => {
+    expect(compareValue(a, b, type)).toBe(expected)
   })
 })
 
 describe('CompareValueRule', () => {
-  it('should return null when value is empty', () => {
+  it.each([
+    ['', null, 'empty string'],
+    [null, null, 'null'],
+    ['abc', null, 'non-numeric string'],
+    [5, null, 'passing comparison'],
+    [0, null, 'boundary value'],
+  ])('validate returns %s for %s', (input, expected) => {
     const rule = new CompareValueRule(0, CompareType.ge)
-    expect(rule.validate('', 'Field')).toBeNull()
-    expect(rule.validate(null, 'Field')).toBeNull()
+    expect(rule.validate(input, 'Field')).toBe(expected)
   })
 
-  it('should return null when value is not numeric', () => {
-    const rule = new CompareValueRule(0, CompareType.ge)
-    expect(rule.validate('abc', 'Field')).toBeNull()
-  })
-
-  it('should return null when comparison passes', () => {
-    const rule = new CompareValueRule(0, CompareType.ge)
-    expect(rule.validate(5, 'Field')).toBeNull()
-    expect(rule.validate(0, 'Field')).toBeNull()
-  })
-
-  it('should return error message when comparison fails', () => {
+  it('returns error message when comparison fails', () => {
     const rule = new CompareValueRule(0, CompareType.ge)
     expect(rule.validate(-1, 'Field')).toBe(
       'Fieldは0以上の値を入力してください'

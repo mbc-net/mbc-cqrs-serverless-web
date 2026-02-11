@@ -24,4 +24,12 @@ describe('removeSortKeyVersion', () => {
   it('should handle string starting with @', () => {
     expect(removeSortKeyVersion('@version')).toBe('')
   })
+
+  it('should handle multiple consecutive @ characters', () => {
+    expect(removeSortKeyVersion('ITEM@@@')).toBe('ITEM@@')
+  })
+
+  it('should handle @ only string', () => {
+    expect(removeSortKeyVersion('@')).toBe('')
+  })
 })

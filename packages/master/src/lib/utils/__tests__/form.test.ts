@@ -15,6 +15,14 @@ describe('removeCommaString', () => {
     expect(removeCommaString('1,000')).toEqual([true, '1000'])
     expect(removeCommaString('1,000,000')).toEqual([true, '1000000'])
   })
+
+  it('should handle consecutive commas', () => {
+    expect(removeCommaString('1,,000')).toEqual([true, '1000'])
+  })
+
+  it('should handle trailing comma', () => {
+    expect(removeCommaString('1,000,')).toEqual([true, '1000'])
+  })
 })
 
 describe('getOrderingString', () => {
