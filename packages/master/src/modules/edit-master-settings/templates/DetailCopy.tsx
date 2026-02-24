@@ -84,7 +84,8 @@ export default function DetailCopy() {
     }
 
     fetchData()
-  }, [params?.id, loadingStore, httpClient])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params?.id])
 
   const handlePaginationChange = (newState: PaginationState) => {
     const newSearchParams = new URLSearchParams(searchParams.toString())

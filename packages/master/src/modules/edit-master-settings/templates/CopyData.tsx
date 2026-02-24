@@ -76,7 +76,8 @@ export default function CopyMasterSettings() {
       }
     }
     fetchData()
-  }, [params?.pk, params?.sk, loadingStore, httpClient])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params?.pk, params?.sk])
 
   // --- Event Handlers ---
   const handlePaginationChange = (newState: PaginationState) => {
