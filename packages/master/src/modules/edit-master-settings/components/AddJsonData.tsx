@@ -151,7 +151,17 @@ export default function AddJsonData({
   const [value, setValue] = useState<string>('')
 
   const saveData = () => {
-    const data = JSON.parse(value)
+    let data: any
+    try {
+      data = JSON.parse(value)
+    } catch {
+      toast({
+        title: 'JSON が無効です',
+        description: '正しいJSONフォーマットである必要があります。',
+        variant: 'destructive',
+      })
+      return
+    }
     if (!isValidSettingJson(data)) {
       toast({
         title: 'JSON が無効です',

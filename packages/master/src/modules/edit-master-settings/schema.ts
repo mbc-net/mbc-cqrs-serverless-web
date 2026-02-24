@@ -77,10 +77,14 @@ export const mapEntity2Form = (settings: SettingDataEntity) => {
 
   if (
     !settings.attributes.fields
-      .map((field) => field.physicalName)
+      ?.map((field) => field.physicalName)
       .includes('code')
   ) {
-    settings.attributes.fields.unshift(...defaultSettingFields)
+    if (!settings.attributes.fields) {
+      settings.attributes.fields = [...defaultSettingFields]
+    } else {
+      settings.attributes.fields.unshift(...defaultSettingFields)
+    }
   }
   const fieldListData: SettingAttrFields[] = settings.attributes.fields.map(
     (item) => {

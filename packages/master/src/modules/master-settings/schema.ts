@@ -160,3 +160,30 @@ export const isValidMasterDataJson = (data: any) => {
 
   return true
 }
+
+/**
+ * Validate unified bulk JSON format.
+ * Each item must have code, name, attributes.
+ * If settingCode is present, seq is also required (master data).
+ * If settingCode is absent, it's treated as a master setting.
+ */
+export const isValidBulkJson = (data: any) => {
+  if (!isArray(data)) {
+    return false
+  }
+  for (const item of data) {
+    if (!isObject(item)) return false
+    if (!('code' in item) || !('name' in item) || !('attributes' in item)) {
+      return false
+    }
+    if (!isObject(item.attributes)) {
+      return false
+    }
+    // If settingCode present, it's master data — seq is required
+    if ('settingCode' in item) {
+      if (typeof item.settingCode !== 'string') return false
+      if (!('seq' in item) || typeof item.seq !== 'number') return false
+    }
+  }
+  return true
+}

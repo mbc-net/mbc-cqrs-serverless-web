@@ -64,7 +64,7 @@ const genPlaceholder = (fieldType: string) => {
 }
 
 const getDescription = (code: string, setting: SettingDataEntity) =>
-  setting.attributes.fields.find((field) => field.physicalName === code)
+  setting.attributes?.fields?.find((field) => field.physicalName === code)
     ?.description ?? ''
 
 export default function EditMasterData() {
@@ -113,8 +113,8 @@ export default function EditMasterData() {
   const [readOnly, setReadOnly] = useState<boolean>()
   const [currentSetting, setCurrentSetting] = useState<SettingDataEntity>()
   const [formatData, setFormatData] = useState<DataSettingDataEntity>()
-  const isExistCodeInFields = currentSetting?.attributes.fields
-    .map((field) => field.physicalName)
+  const isExistCodeInFields = currentSetting?.attributes?.fields
+    ?.map((field) => field.physicalName)
     .includes('code')
 
   const [detailInfo, setDetailInfo] = useState<{
@@ -171,7 +171,7 @@ export default function EditMasterData() {
       const processedData = JSON.parse(JSON.stringify(data))
 
       // Iterate through the master setting's field definitions to find JSON fields.
-      currentSetting.attributes.fields.forEach((field) => {
+      currentSetting?.attributes?.fields?.forEach((field) => {
         // Check if the field is of type 'json' and if a value for it exists in the form data.
         if (
           field.dataType === 'json' &&
@@ -217,7 +217,7 @@ export default function EditMasterData() {
         seq = 0
       }
       const settingCode = processedData.settingCode?.split('#')[1]
-      const codeField = currentSetting.attributes.fields.find(
+      const codeField = currentSetting?.attributes?.fields?.find(
         (field) => field.physicalName === 'code'
       )
       let result: DataSettingDataEntity | undefined
@@ -482,7 +482,7 @@ export default function EditMasterData() {
     const formValues = watch()
     const attributes: Record<string, any> = { ...formValues.attributes }
 
-    if (currentSetting?.attributes.fields) {
+    if (currentSetting?.attributes?.fields) {
       currentSetting.attributes.fields.forEach((field) => {
         const fieldName = field.physicalName
         const formValue = formValues.attributes?.[fieldName]
@@ -553,7 +553,7 @@ export default function EditMasterData() {
   useEffect(() => {
     const fetchDataFormat = async () => {
       if (!currentSetting || isEdit) return
-      const settingCodeField = currentSetting.attributes.fields.find(
+      const settingCodeField = currentSetting.attributes?.fields?.find(
         (field) => field.physicalName === 'code'
       )
       if (settingCodeField?.dataType === 'auto_number') {
@@ -781,7 +781,7 @@ export default function EditMasterData() {
                 </>
               )}
 
-              {currentSetting?.attributes.fields?.map((field) => {
+              {currentSetting?.attributes?.fields?.map((field) => {
                 if (field.physicalName === 'code') {
                   if (field.dataType === 'string') {
                     return (

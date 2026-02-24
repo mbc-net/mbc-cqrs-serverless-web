@@ -76,7 +76,7 @@ export default function CopyMasterSettings() {
       }
     }
     fetchData()
-  }, [params?.pk, params?.sk])
+  }, [params?.pk, params?.sk, loadingStore, httpClient])
 
   // --- Event Handlers ---
   const handlePaginationChange = (newState: PaginationState) => {

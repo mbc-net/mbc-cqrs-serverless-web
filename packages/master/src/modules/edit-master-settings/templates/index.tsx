@@ -46,7 +46,7 @@ export default function EditMasterSettings() {
     }
 
     fetchData()
-  }, [params.pk, params.sk])
+  }, [params.pk, params.sk, loadingStore, httpClient])
 
   return <SettingsForm editedData={editedData} setEditedData={setEditedData} />
 }

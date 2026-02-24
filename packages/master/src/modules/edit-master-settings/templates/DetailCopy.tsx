@@ -84,7 +84,7 @@ export default function DetailCopy() {
     }
 
     fetchData()
-  }, [params?.id])
+  }, [params?.id, loadingStore, httpClient])
 
   const handlePaginationChange = (newState: PaginationState) => {
     const newSearchParams = new URLSearchParams(searchParams.toString())
