@@ -3,7 +3,13 @@
 import { SaveIcon } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import { AxiosError } from 'axios'
 import DownloadJSONButton from '../../../components/buttons/DownloadJSONButton'
 import ImportJSONButton from '../../../components/buttons/ImportJSONButton'
@@ -272,9 +278,9 @@ export default function AddJsonData({
   const [value, setValue] = useState<string>('')
   const [submitting, setSubmitting] = useState(false)
   const [open, setOpen] = useState(false)
-  const [savedResults, setSavedResults] = useState<
-    (SettingDataEntity | DataSettingDataEntity)[]
-  >([])
+  const savedResultsRef = useRef<(SettingDataEntity | DataSettingDataEntity)[]>(
+    []
+  )
   const [expectedCount, setExpectedCount] = useState(0)
   const httpClient = useHttpClient()
   const [bulkTenant, setBulkTenant] = useState<string>(tenantCode)
@@ -313,10 +319,14 @@ export default function AddJsonData({
       setOpen(false)
 
       onSave?.({
-        settings: savedResults.length > 0 ? (savedResults as any) : undefined,
+        settings:
+          savedResultsRef.current.length > 0
+            ? (savedResultsRef.current as any)
+            : undefined,
       })
     }
-  }, [finishedCount, expectedCount, toast, stopBulk, savedResults, onSave])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [finishedCount, expectedCount, toast, stopBulk, onSave])
 
   const saveData = async () => {
     let parsedData: any
@@ -430,7 +440,7 @@ export default function AddJsonData({
         ...item,
         sk: removeSortKeyVersion(item.sk),
       }))
-      setSavedResults(processed)
+      savedResultsRef.current = processed
 
       const itemsWithRequestId = res.filter((item) => item.requestId)
       if (itemsWithRequestId.length === 0) {
