@@ -46,7 +46,8 @@ export default function EditMasterSettings() {
     }
 
     fetchData()
-  }, [params.pk, params.sk, loadingStore, httpClient])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params.pk, params.sk])
 
   return <SettingsForm editedData={editedData} setEditedData={setEditedData} />
 }

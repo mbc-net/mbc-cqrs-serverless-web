@@ -273,7 +273,8 @@ export default function SettingsForm({
         JSON.stringify(form.getValues()) + JSON.stringify(fieldList)
       )
     }
-  }, [editedData, readOnly])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editedData])
 
   useEffect(() => {
     fetchFormatOptions()
