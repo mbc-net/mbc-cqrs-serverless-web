@@ -3,7 +3,13 @@
 import { SaveIcon } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import { AxiosError } from 'axios'
 import DownloadJSONButton from '../../../components/buttons/DownloadJSONButton'
 import ImportJSONButton from '../../../components/buttons/ImportJSONButton'
@@ -15,12 +21,7 @@ import { useSubscribeBulkCommandStatus } from '../../../lib/hook/useSubscribeMes
 import { removeSortKeyVersion } from '../../../lib/utils/removeSortKeyVersion'
 import { useHttpClient } from '../../../provider'
 import { DataSettingDataEntity, SettingDataEntity } from '../../../types'
-import {
-  isValidMasterDataJson,
-  isValidSettingJson,
-  sampleMixedJson,
-  sampleSettingJson,
-} from '../schema'
+import { isValidBulkJson, sampleMixedJson } from '../schema'
 import JSONEditorComponent from '../../../components/JSONEditorComponent'
 import { ExceptionBase } from '../../../exceptions/exception-base'
 
@@ -65,58 +66,31 @@ export type MappedData = {
 }
 export type MapResult = MappedSetting | MappedData
 
-// Detection functions to identify item types
-function isMasterSettingsItem(item: any): boolean {
-  return (
-    typeof item === 'object' &&
-    item !== null &&
-    'code' in item &&
-    'name' in item &&
-    'attributes' in item &&
-    typeof item.attributes === 'object' &&
-    item.attributes !== null &&
-    Array.isArray(item.attributes.fields)
-  )
-}
-
-function isMasterDataItem(item: any): boolean {
-  return (
-    typeof item === 'object' &&
-    item !== null &&
-    'settingCode' in item &&
-    'code' in item &&
-    'name' in item &&
-    'attributes' in item &&
-    'seq' in item &&
-    typeof item.seq === 'number'
-  )
-}
-
-// Split data array into Settings, Data, and Invalid items
-function splitDataByType(data: any[]): {
-  settings: any[]
-  data: any[]
-  invalid: any[]
+// Convert MapResult items to unified bulk format
+function mapResultToBulkItem(m: MapResult): {
+  name: string
+  code: string
+  attributes: object
+  tenantCode?: string
+  settingCode?: string
+  seq?: number
 } {
-  const settings: any[] = []
-  const dataItems: any[] = []
-  const invalid: any[] = []
-
-  for (const item of data) {
-    const isSettings = isMasterSettingsItem(item)
-    const isData = isMasterDataItem(item)
-
-    // Prioritize Data over Settings if both match
-    if (isData) {
-      dataItems.push(item)
-    } else if (isSettings) {
-      settings.push(item)
-    } else {
-      invalid.push(item)
+  if (m.kind === 'setting') {
+    return {
+      name: m.value.name,
+      code: m.value.code,
+      tenantCode: m.value.tenantCode,
+      attributes: m.value.settingValue,
     }
   }
-
-  return { settings, data: dataItems, invalid }
+  return {
+    name: m.value.name,
+    code: m.value.code,
+    settingCode: m.value.settingCode,
+    tenantCode: m.value.tenantCode,
+    seq: m.value.seq,
+    attributes: m.value.attributes,
+  }
 }
 
 function ModalContent({
@@ -304,29 +278,24 @@ export default function AddJsonData({
   const [value, setValue] = useState<string>('')
   const [submitting, setSubmitting] = useState(false)
   const [open, setOpen] = useState(false)
-  const [savedSettingsData, setSavedSettingsData] = useState<
-    SettingDataEntity[]
-  >([])
-  const [savedDataData, setSavedDataData] = useState<DataSettingDataEntity[]>(
+  const savedResultsRef = useRef<(SettingDataEntity | DataSettingDataEntity)[]>(
     []
   )
-  const [settingsExpectedCount, setSettingsExpectedCount] = useState(0)
-  const [dataExpectedCount, setDataExpectedCount] = useState(0)
+  const [expectedCount, setExpectedCount] = useState(0)
   const httpClient = useHttpClient()
-  const [settingsTenant, setSettingsTenant] = useState<string>(tenantCode)
-  const [dataTenant, setDataTenant] = useState<string>(tenantCode)
+  const [bulkTenant, setBulkTenant] = useState<string>(tenantCode)
 
   const {
-    start: startSettings,
-    stop: stopSettings,
-    finishedCount: settingsFinishedCount,
-  } = useSubscribeBulkCommandStatus(settingsTenant, () => {
-    // Timeout callback for Settings
+    start: startBulk,
+    stop: stopBulk,
+    finishedCount,
+  } = useSubscribeBulkCommandStatus(bulkTenant, () => {
+    // Timeout callback
     setSubmitting(false)
     setOpen(false)
-    setSettingsExpectedCount(0)
+    setExpectedCount(0)
     toast({
-      title: 'マスター設定の登録に失敗しました。',
+      title: 'マスターデータの反映に失敗しました。',
       description:
         'タイムアウトしました。入力内容を確認した上で再度やり直してください。',
       variant: 'destructive',
@@ -334,98 +303,30 @@ export default function AddJsonData({
     router.refresh()
   })
 
-  const {
-    start: startData,
-    stop: stopData,
-    finishedCount: dataFinishedCount,
-  } = useSubscribeBulkCommandStatus(dataTenant, () => {
-    // Timeout callback for Data
-    setSubmitting(false)
-    setOpen(false)
-    setDataExpectedCount(0)
-    toast({
-      title: 'マスターデータの登録に失敗しました。',
-      description:
-        'タイムアウトしました。入力内容を確認した上で再度やり直してください。',
-      variant: 'destructive',
-    })
-    router.refresh()
-  })
-
-  // Track when all items are finished - Settings
+  // Track when all items are finished
   useEffect(() => {
-    if (settingsFinishedCount === 0 || settingsExpectedCount === 0) return
+    if (finishedCount === 0 || expectedCount === 0) return
 
-    // Show toast for each completed item
     toast({
-      description: `マスター設定を登録しました (${settingsFinishedCount}/${settingsExpectedCount})`,
+      description: `マスターデータを反映しました (${finishedCount}/${expectedCount})`,
       variant: 'success',
     })
 
-    // Check if all items are finished
-    if (settingsFinishedCount >= settingsExpectedCount) {
-      stopSettings()
-      setSettingsExpectedCount(0)
-    }
-  }, [settingsFinishedCount, settingsExpectedCount, toast, stopSettings])
-
-  // Track when all items are finished - Data
-  useEffect(() => {
-    if (dataFinishedCount === 0 || dataExpectedCount === 0) return
-
-    // Show toast for each completed item
-    toast({
-      description: `マスターデータを登録しました (${dataFinishedCount}/${dataExpectedCount})`,
-      variant: 'success',
-    })
-
-    // Check if all items are finished
-    if (dataFinishedCount >= dataExpectedCount) {
-      stopData()
-      setDataExpectedCount(0)
-    }
-  }, [dataFinishedCount, dataExpectedCount, toast, stopData])
-
-  // Check if both operations complete
-  useEffect(() => {
-    // Check if Settings are complete (either not started or all finished)
-    const settingsComplete =
-      settingsExpectedCount === 0 ||
-      (settingsExpectedCount > 0 &&
-        settingsFinishedCount >= settingsExpectedCount)
-
-    // Check if Data are complete (either not started or all finished)
-    const dataComplete =
-      dataExpectedCount === 0 ||
-      (dataExpectedCount > 0 && dataFinishedCount >= dataExpectedCount)
-
-    // Only proceed if at least one operation was started and both are complete
-    const hasStartedOperation =
-      settingsExpectedCount > 0 || dataExpectedCount > 0
-    const bothComplete = settingsComplete && dataComplete
-
-    if (bothComplete && hasStartedOperation && submitting) {
+    if (finishedCount >= expectedCount) {
+      stopBulk()
+      setExpectedCount(0)
       setSubmitting(false)
       setOpen(false)
-      setSettingsExpectedCount(0)
-      setDataExpectedCount(0)
 
-      // Call onSave to refresh data
       onSave?.({
-        settings: savedSettingsData.length > 0 ? savedSettingsData : undefined,
-        data: savedDataData.length > 0 ? savedDataData : undefined,
+        settings:
+          savedResultsRef.current.length > 0
+            ? (savedResultsRef.current as any)
+            : undefined,
       })
     }
-  }, [
-    settingsFinishedCount,
-    settingsExpectedCount,
-    dataFinishedCount,
-    dataExpectedCount,
-    savedSettingsData,
-    savedDataData,
-    onSave,
-    submitting,
-  ])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [finishedCount, expectedCount, toast, stopBulk, onSave])
 
   const saveData = async () => {
     let parsedData: any
@@ -449,283 +350,124 @@ export default function AddJsonData({
       return
     }
 
+    let bulkItems: {
+      name: string
+      code: string
+      attributes: object
+      tenantCode?: string
+      settingCode?: string
+      seq?: number
+    }[]
+
     // If mapper provided, transform first
     if (mapRawItem) {
       const mapped = parsedData
         .map((item: any) => mapRawItem(item))
         .filter(Boolean) as MapResult[]
 
-      const mappedSettings = mapped
-        .filter((m) => m.kind === 'setting')
-        .map((m) => (m as MappedSetting).value)
-      const mappedData = mapped
-        .filter((m) => m.kind === 'data')
-        .map((m) => (m as MappedData).value)
-
-      if (mappedSettings.length === 0 && mappedData.length === 0) {
+      if (mapped.length === 0) {
         toast({ title: 'データがありません', variant: 'destructive' })
         return
       }
 
-      // Basic validation for mapped settings
-      const invalidSettings = mappedSettings.filter(
-        (x) =>
-          !x ||
-          typeof x.name !== 'string' ||
-          typeof x.code !== 'string' ||
-          typeof x.settingValue !== 'object'
-      )
-      if (invalidSettings.length > 0) {
+      // Validate mapped results
+      for (const m of mapped) {
+        if (m.kind === 'setting') {
+          if (
+            typeof m.value.name !== 'string' ||
+            typeof m.value.code !== 'string' ||
+            typeof m.value.settingValue !== 'object'
+          ) {
+            toast({
+              title: 'マッピング結果が無効です',
+              description:
+                '設定データの name, code は文字列、settingValue はオブジェクトである必要があります。',
+              variant: 'destructive',
+            })
+            return
+          }
+        } else {
+          if (
+            typeof m.value.settingCode !== 'string' ||
+            typeof m.value.code !== 'string' ||
+            typeof m.value.name !== 'string' ||
+            typeof m.value.seq !== 'number' ||
+            typeof m.value.attributes !== 'object'
+          ) {
+            toast({
+              title: 'マッピング結果が無効です',
+              description:
+                'データの settingCode, code, name は文字列、seq は数値、attributes はオブジェクトである必要があります。',
+              variant: 'destructive',
+            })
+            return
+          }
+        }
+      }
+
+      bulkItems = mapped.map(mapResultToBulkItem)
+    } else {
+      // Validate using unified bulk validation
+      if (!isValidBulkJson(parsedData)) {
         toast({
-          title: 'マッピング結果が無効です',
+          title: 'JSON が無効です',
           description:
-            '設定データの name, code は文字列、settingValue はオブジェクトである必要があります。',
+            '各項目には code, name, attributes が必須です。マスターデータの場合は settingCode, seq も必須です。',
           variant: 'destructive',
         })
         return
       }
 
-      // Basic validation for mapped data
-      const invalidData = mappedData.filter(
-        (x) =>
-          !x ||
-          typeof x.settingCode !== 'string' ||
-          typeof x.code !== 'string' ||
-          typeof x.name !== 'string' ||
-          typeof x.seq !== 'number' ||
-          typeof x.attributes !== 'object'
-      )
-      if (invalidData.length > 0) {
-        toast({
-          title: 'マッピング結果が無効です',
-          description:
-            'データの settingCode, code, name は文字列、seq は数値、attributes はオブジェクトである必要があります。',
-          variant: 'destructive',
-        })
-        return
-      }
-
-      setSubmitting(true)
-
-      // Process mapped settings
-      if (mappedSettings.length > 0) {
-        try {
-          const res = (
-            await httpClient.post<SettingDataEntity[]>(
-              API_URLS.SETTING.CREATE_BULK,
-              {
-                items: mappedSettings,
-              }
-            )
-          ).data
-
-          if (!res?.[0]?.requestId) {
-            toast({
-              title: 'マスター設定の登録に失敗しました。',
-              description: '入力内容を確認した上で再度やり直してください。',
-              variant: 'destructive',
-            })
-            setSubmitting(false)
-            return
-          }
-          // Switch listening tenant to mapped tenant if provided
-          const mappedTenant = mappedSettings[0]?.tenantCode || tenantCode
-          setSettingsTenant(mappedTenant)
-          setSettingsExpectedCount(res.length)
-          startSettings(res[0].requestId)
-          setSavedSettingsData(
-            res.map((item) => ({
-              ...item,
-              sk: removeSortKeyVersion(item.sk),
-            }))
-          )
-        } catch (error) {
-          console.error(error)
-          const errorMessage = getErrorMessage(error)
-          toast({
-            title: 'マスター設定の登録に失敗しました。',
-            description: errorMessage,
-            variant: 'destructive',
-          })
-          setSubmitting(false)
-          return
-        }
-      }
-
-      // Process mapped data
-      if (mappedData.length > 0) {
-        try {
-          const res = (
-            await httpClient.post<DataSettingDataEntity[]>(
-              API_URLS.DATA.CREATE_BULK,
-              {
-                items: mappedData,
-              }
-            )
-          ).data
-
-          if (!res?.[0]?.requestId) {
-            toast({
-              title: 'マスターデータの登録に失敗しました。',
-              description: '入力内容を確認した上で再度やり直してください。',
-              variant: 'destructive',
-            })
-            setSubmitting(false)
-            return
-          }
-          // Switch listening tenant to mapped tenant if provided
-          const mappedTenant = mappedData[0]?.tenantCode || tenantCode
-          setDataTenant(mappedTenant)
-          setDataExpectedCount(res.length)
-          startData(res[0].requestId)
-          setSavedDataData(
-            res.map((item) => ({
-              ...item,
-              sk: removeSortKeyVersion(item.sk),
-            }))
-          )
-        } catch (error) {
-          console.error(error)
-          const errorMessage = getErrorMessage(error)
-          toast({
-            title: 'マスターデータの登録に失敗しました。',
-            description: errorMessage,
-            variant: 'destructive',
-          })
-          setSubmitting(false)
-          return
-        }
-      }
-
-      return
+      bulkItems = parsedData
     }
 
-    // Split data by type
-    const { settings, data: dataItems, invalid } = splitDataByType(parsedData)
-
-    if (invalid.length > 0) {
-      toast({
-        title: 'JSON が無効です',
-        description: `${invalid.length}個の項目が認識できませんでした。`,
-        variant: 'destructive',
-      })
-      return
-    }
-
-    if (settings.length === 0 && dataItems.length === 0) {
+    if (bulkItems.length === 0) {
       toast({ title: 'データがありません', variant: 'destructive' })
       return
     }
 
     setSubmitting(true)
 
-    // Process Settings if present
-    if (settings.length > 0) {
-      if (!isValidSettingJson(settings)) {
-        toast({
-          title: 'マスター設定のJSONが無効です',
-          variant: 'destructive',
-        })
+    try {
+      const res = (
+        await httpClient.post<(SettingDataEntity | DataSettingDataEntity)[]>(
+          API_URLS.MASTER.BULK,
+          { items: bulkItems }
+        )
+      ).data
+
+      const processed = res.map((item) => ({
+        ...item,
+        sk: removeSortKeyVersion(item.sk),
+      }))
+      savedResultsRef.current = processed
+
+      const itemsWithRequestId = res.filter((item) => item.requestId)
+      if (itemsWithRequestId.length === 0) {
         setSubmitting(false)
-        return
-      }
-
-      try {
-        const res = (
-          await httpClient.post<SettingDataEntity[]>(
-            API_URLS.SETTING.CREATE_BULK,
-            {
-              items: settings.map((item) => ({
-                ...item,
-                settingValue: {
-                  ...item.attributes,
-                },
-              })),
-            }
-          )
-        ).data
-
-        if (!res?.[0].requestId) {
-          toast({
-            title: 'マスター設定の登録に失敗しました。',
-            description: '入力内容を確認した上で再度やり直してください。',
-            variant: 'destructive',
-          })
-          setSubmitting(false)
-          return
-        } else {
-          setSettingsExpectedCount(res.length)
-          startSettings(res[0].requestId)
-          setSavedSettingsData(
-            res.map((item) => ({
-              ...item,
-              sk: removeSortKeyVersion(item.sk),
-            }))
-          )
-        }
-      } catch (error) {
-        console.error(error)
-        const errorMessage = getErrorMessage(error)
+        setOpen(false)
         toast({
-          title: 'マスター設定の登録に失敗しました。',
-          description: errorMessage,
-          variant: 'destructive',
+          description: 'データに変更はありませんでした。',
+          variant: 'success',
         })
-        setSubmitting(false)
-        return
-      }
-    }
-
-    // Process Data if present
-    if (dataItems.length > 0) {
-      if (!isValidMasterDataJson(dataItems)) {
-        toast({
-          title: 'マスターデータのJSONが無効です',
-          variant: 'destructive',
+        onSave?.({
+          settings: processed.length > 0 ? (processed as any) : undefined,
         })
-        setSubmitting(false)
-        return
+      } else {
+        const itemTenant = bulkItems[0]?.tenantCode || tenantCode
+        setBulkTenant(itemTenant)
+        setExpectedCount(itemsWithRequestId.length)
+        startBulk(itemsWithRequestId[0].requestId)
       }
-
-      try {
-        const res = (
-          await httpClient.post<DataSettingDataEntity[]>(
-            API_URLS.DATA.CREATE_BULK,
-            {
-              items: dataItems,
-            }
-          )
-        ).data
-
-        if (!res?.[0].requestId) {
-          toast({
-            title: 'マスターデータの登録に失敗しました。',
-            description: '入力内容を確認した上で再度やり直してください。',
-            variant: 'destructive',
-          })
-          setSubmitting(false)
-          return
-        } else {
-          setDataExpectedCount(res.length)
-          startData(res[0].requestId)
-          setSavedDataData(
-            res.map((item) => ({
-              ...item,
-              sk: removeSortKeyVersion(item.sk),
-            }))
-          )
-        }
-      } catch (error) {
-        console.error(error)
-        const errorMessage = getErrorMessage(error)
-        toast({
-          title: 'マスターデータの登録に失敗しました。',
-          description: errorMessage,
-          variant: 'destructive',
-        })
-        setSubmitting(false)
-        return
-      }
+    } catch (error) {
+      console.error(error)
+      const errorMessage = getErrorMessage(error)
+      toast({
+        title: 'マスターデータの反映に失敗しました。',
+        description: errorMessage,
+        variant: 'destructive',
+      })
+      setSubmitting(false)
     }
   }
 

@@ -83,7 +83,7 @@ export default function NewCopyMasterSettings() {
   )
   const isExistCodeInFields = useMemo(
     () =>
-      currentSetting?.attributes.fields.some(
+      currentSetting?.attributes?.fields?.some(
         (field) => field.physicalName === 'code'
       ),
     [currentSetting]
@@ -282,7 +282,7 @@ export default function NewCopyMasterSettings() {
     }
 
     const dynamicColumns: ColumnDef<MasterRdsEntity>[] =
-      currentSetting?.attributes.fields
+      currentSetting?.attributes?.fields
         ?.filter((field) => field.isShowedOnList)
         .map((item) => {
           if (item.physicalName === 'code') {

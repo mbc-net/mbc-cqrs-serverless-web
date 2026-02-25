@@ -17,8 +17,8 @@ describe('BaseUrlProvider', () => {
   it('should construct URLs with empty segment', () => {
     const provider = new BaseUrlProvider()
 
-    expect(provider.SETTINGS_PAGE_URL).toBe('//master-setting')
-    expect(provider.DATA_PAGE_URL).toBe('//master-data')
+    expect(provider.SETTINGS_PAGE_URL).toBe('/master-setting')
+    expect(provider.DATA_PAGE_URL).toBe('/master-data')
   })
 
   it('should generate copy setting page URL', () => {

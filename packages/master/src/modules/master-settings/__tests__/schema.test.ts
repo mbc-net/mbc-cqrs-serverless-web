@@ -1,6 +1,7 @@
 import {
   isValidSettingJson,
   isValidMasterDataJson,
+  isValidBulkJson,
   sampleSettingJson,
   sampleMixedJson,
 } from '../schema'
@@ -225,6 +226,126 @@ describe('master-settings/schema', () => {
     it('should pass isValidSettingJson validation', () => {
       const parsed = JSON.parse(sampleSettingJson)
       expect(isValidSettingJson(parsed)).toBe(true)
+    })
+  })
+
+  describe('isValidBulkJson', () => {
+    it('valid mixed array (settings + data) returns true', () => {
+      const data = [
+        {
+          code: 'SETTING_1',
+          name: '設定1',
+          attributes: { fields: [] },
+        },
+        {
+          settingCode: 'SETTING_1',
+          code: 'DATA_1',
+          name: 'データ1',
+          seq: 0,
+          attributes: { key: 'val' },
+        },
+      ]
+      expect(isValidBulkJson(data)).toBe(true)
+    })
+
+    it('valid settings-only array returns true', () => {
+      const data = [
+        {
+          code: 'S1',
+          name: '設定',
+          attributes: { description: '' },
+        },
+      ]
+      expect(isValidBulkJson(data)).toBe(true)
+    })
+
+    it('valid data-only array returns true', () => {
+      const data = [
+        {
+          settingCode: 'S1',
+          code: 'D1',
+          name: 'データ',
+          seq: 1,
+          attributes: {},
+        },
+      ]
+      expect(isValidBulkJson(data)).toBe(true)
+    })
+
+    it('empty array returns true', () => {
+      expect(isValidBulkJson([])).toBe(true)
+    })
+
+    it('non-array input returns false', () => {
+      expect(isValidBulkJson({})).toBe(false)
+      expect(isValidBulkJson('string')).toBe(false)
+      expect(isValidBulkJson(null)).toBe(false)
+      expect(isValidBulkJson(undefined)).toBe(false)
+      expect(isValidBulkJson(42)).toBe(false)
+    })
+
+    it('missing code returns false', () => {
+      const data = [{ name: 'N', attributes: {} }]
+      expect(isValidBulkJson(data)).toBe(false)
+    })
+
+    it('missing name returns false', () => {
+      const data = [{ code: 'C', attributes: {} }]
+      expect(isValidBulkJson(data)).toBe(false)
+    })
+
+    it('missing attributes returns false', () => {
+      const data = [{ code: 'C', name: 'N' }]
+      expect(isValidBulkJson(data)).toBe(false)
+    })
+
+    it('non-object attributes returns false', () => {
+      const data = [{ code: 'C', name: 'N', attributes: 'invalid' }]
+      expect(isValidBulkJson(data)).toBe(false)
+    })
+
+    it('settingCode present but seq missing returns false', () => {
+      const data = [
+        {
+          settingCode: 'S1',
+          code: 'D1',
+          name: 'データ',
+          attributes: {},
+        },
+      ]
+      expect(isValidBulkJson(data)).toBe(false)
+    })
+
+    it('settingCode present but seq is non-number returns false', () => {
+      const data = [
+        {
+          settingCode: 'S1',
+          code: 'D1',
+          name: 'データ',
+          seq: '0',
+          attributes: {},
+        },
+      ]
+      expect(isValidBulkJson(data)).toBe(false)
+    })
+
+    it('settingCode is non-string returns false', () => {
+      const data = [
+        {
+          settingCode: 123,
+          code: 'D1',
+          name: 'データ',
+          seq: 0,
+          attributes: {},
+        },
+      ]
+      expect(isValidBulkJson(data)).toBe(false)
+    })
+
+    it('non-object item returns false', () => {
+      expect(isValidBulkJson([null])).toBe(false)
+      expect(isValidBulkJson([42])).toBe(false)
+      expect(isValidBulkJson(['string'])).toBe(false)
     })
   })
 
