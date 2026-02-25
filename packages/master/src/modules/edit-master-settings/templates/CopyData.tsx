@@ -76,6 +76,7 @@ export default function CopyMasterSettings() {
       }
     }
     fetchData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params?.pk, params?.sk])
 
   // --- Event Handlers ---
