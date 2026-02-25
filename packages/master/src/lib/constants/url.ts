@@ -110,7 +110,7 @@ export const API_URLS = {
     WITHOUT_PROVIDED_SETTING: '/sequence',
   },
   MASTER: {
-    BULK: '/master-bulk/bulk',
+    BULK: '/master-bulk',
   },
   HEALTH: '/',
   CCI: '/master/cci',
