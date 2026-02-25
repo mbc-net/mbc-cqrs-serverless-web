@@ -8,4 +8,11 @@ module.exports = {
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
   },
+  setupFiles: ['./jest.setup.js'],
+  collectCoverageFrom: [
+    'src/**/*.{ts,tsx}',
+    '!src/**/*.d.ts',
+    '!src/**/index.ts',
+  ],
+  coveragePathIgnorePatterns: ['/node_modules/', '/__tests__/'],
 }

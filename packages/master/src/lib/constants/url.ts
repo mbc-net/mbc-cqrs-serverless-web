@@ -46,7 +46,7 @@ export class BaseUrlProvider implements IUrlProvider {
    */
   constructor(segment: string = '') {
     // 1. Initialize baseUrl first.
-    this.baseUrl = `/${segment}`
+    this.baseUrl = segment ? `/${segment}` : ''
 
     // 2. Now, initialize all dependent properties. This resolves the error.
     this.SETTINGS_PAGE_URL = `${this.baseUrl}/master-setting`
@@ -108,6 +108,9 @@ export const API_URLS = {
   SEQUENCE: {
     WITH_PROVIDED_SETTING: '/sequence/with-provided-setting',
     WITHOUT_PROVIDED_SETTING: '/sequence',
+  },
+  MASTER: {
+    BULK: '/master-bulk',
   },
   HEALTH: '/',
   CCI: '/master/cci',

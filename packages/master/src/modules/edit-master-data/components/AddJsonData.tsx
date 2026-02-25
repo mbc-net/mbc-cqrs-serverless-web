@@ -126,7 +126,17 @@ export default function AddJsonData({
   }
 
   const saveData = async () => {
-    const data = JSON.parse(value)
+    let data: any
+    try {
+      data = JSON.parse(value)
+    } catch {
+      toast({
+        title: 'JSON が無効です',
+        description: '正しいJSONフォーマットである必要があります。',
+        variant: 'destructive',
+      })
+      return
+    }
     if (!isValidJsonData(data)) {
       toast({
         title: 'JSON が無効です',
