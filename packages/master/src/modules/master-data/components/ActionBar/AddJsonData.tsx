@@ -170,7 +170,7 @@ export default function AddJsonData({
       setOpen(false)
       setExpectedCount(0)
       toast({
-        title: 'データ登録に失敗しました。',
+        title: 'データ反映に失敗しました。',
         description:
           'タイムアウトしました。入力内容を確認した上で再度やり直してください。',
         variant: 'destructive',
@@ -185,7 +185,7 @@ export default function AddJsonData({
 
     // Show toast for each completed item
     toast({
-      description: `登録しました (${finishedCount}/${expectedCount})`,
+      description: `反映しました (${finishedCount}/${expectedCount})`,
       variant: 'success',
     })
 
@@ -202,7 +202,17 @@ export default function AddJsonData({
   }, [finishedCount, expectedCount, savedValue, onSave, toast, stop])
 
   const saveData = async () => {
-    const data = JSON.parse(value)
+    let data: any
+    try {
+      data = JSON.parse(value)
+    } catch {
+      toast({
+        title: 'JSON が無効です',
+        description: '正しいJSONフォーマットである必要があります。',
+        variant: 'destructive',
+      })
+      return
+    }
     if (!isValidJsonData(data)) {
       toast({
         title: 'JSON が無効です',
@@ -226,23 +236,32 @@ export default function AddJsonData({
       console.error(error)
       setSubmitting(false)
       setExpectedCount(0)
-    }
-
-    if (!res?.[0].requestId) {
-      setSubmitting(false)
-      setExpectedCount(0)
       toast({
-        title: 'データ登録に失敗しました。',
-        description: '入力内容を確認した上で再度やり直してください。',
+        title: 'データ反映に失敗しました。',
         variant: 'destructive',
       })
+      return
+    }
+
+    const itemsWithRequestId = res.filter((item) => item.requestId)
+    if (itemsWithRequestId.length === 0) {
+      // All items had no changes (not dirty)
+      setSubmitting(false)
+      setOpen(false)
+      setExpectedCount(0)
+      toast({
+        description: 'データに変更はありませんでした。',
+        variant: 'success',
+      })
+      onSave(
+        res.map((item) => ({ ...item, sk: removeSortKeyVersion(item.sk) }))
+      )
     } else {
-      // Set expected count based on response length
-      setExpectedCount(res.length)
+      setExpectedCount(itemsWithRequestId.length)
       setSavedValue(
         res.map((item) => ({ ...item, sk: removeSortKeyVersion(item.sk) }))
       )
-      start(res[0].requestId)
+      start(itemsWithRequestId[0].requestId)
     }
   }
 

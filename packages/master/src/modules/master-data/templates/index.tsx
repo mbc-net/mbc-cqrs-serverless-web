@@ -83,8 +83,8 @@ export default function MasterData() {
     AccordionValue.DATA_RESULT,
   ])
 
-  const isExistCodeInFields = currentSetting?.attributes.fields
-    .map((field) => field.physicalName)
+  const isExistCodeInFields = currentSetting?.attributes?.fields
+    ?.map((field) => field.physicalName)
     .includes('code')
 
   const { form, loading, loadingStore, control, handleSubmit, reset, errors } =
@@ -190,7 +190,7 @@ export default function MasterData() {
   const columns: ColumnDef<MasterRdsEntity>[] = useMemo(() => {
     // First, define the dynamically generated columns from the settings
     const dynamicColumns: ColumnDef<MasterRdsEntity>[] =
-      currentSetting?.attributes.fields
+      currentSetting?.attributes?.fields
         ?.filter((field) => field.isShowedOnList)
         .map((item) => {
           // Special case for the 'code' column with a link

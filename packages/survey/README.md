@@ -1,4 +1,4 @@
-# `@mbc-cqrs-serverless-web/survey`
+# @mbc-cqrs-serverless/survey-web
 
 A comprehensive React component library for building dynamic surveys and forms, built for Next.js applications.
 
@@ -15,7 +15,7 @@ A comprehensive React component library for building dynamic surveys and forms, 
 ## Installation
 
 ```bash
-npm install @mbc-cqrs-serverless-web/survey
+npm install @mbc-cqrs-serverless/survey-web
 ```
 
 ## Environment Variables Setup
@@ -61,13 +61,13 @@ First, import the CSS styles in your Next.js application:
 
 ```tsx
 // pages/_app.tsx or app/layout.tsx
-import '@mbc-cqrs-serverless-web/survey/styles.css'
+import '@mbc-cqrs-serverless/survey-web/styles.css'
 ```
 
 ### 2. Survey Template Management
 
 ```tsx
-import { SurveyTemplatePage } from '@mbc-cqrs-serverless-web/survey/SurveyTemplatePage'
+import { SurveyTemplatePage } from '@mbc-cqrs-serverless/survey-web/SurveyTemplatePage'
 
 export default function SurveyTemplates() {
   return <SurveyTemplatePage />
@@ -77,7 +77,7 @@ export default function SurveyTemplates() {
 ### 3. Edit Survey Template
 
 ```tsx
-import { EditSurveyTemplatePage } from '@mbc-cqrs-serverless-web/survey/EditSurveyTemplatePage'
+import { EditSurveyTemplatePage } from '@mbc-cqrs-serverless/survey-web/EditSurveyTemplatePage'
 
 export default function EditSurvey({ params }: { params: { id: string } }) {
   return <EditSurveyTemplatePage id={params.id} />
@@ -87,7 +87,7 @@ export default function EditSurvey({ params }: { params: { id: string } }) {
 ### 4. Survey Form (Public-facing)
 
 ```tsx
-import { SurveyForm } from '@mbc-cqrs-serverless-web/survey/SurveyForm'
+import { SurveyForm } from '@mbc-cqrs-serverless/survey-web/SurveyForm'
 
 export default function Survey({ params }: { params: { id: string } }) {
   return <SurveyForm surveyId={params.id} />
@@ -203,6 +203,12 @@ Make sure you have these peer dependencies installed:
 ```bash
 npm install next@^14.0.0 react@^18.0.0 react-dom@^18.0.0
 ```
+
+## Documentation
+
+For detailed documentation, guides, and API reference, visit the official documentation site:
+
+- [Survey Web Documentation](https://mbc-cqrs-serverless.mbc-net.com/docs/survey-web)
 
 ## License
 
