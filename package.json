@@ -20,11 +20,11 @@
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
     "husky": "^9.1.7",
-    "jest": "^29.7.0",
     "lerna": "^8.2.4",
     "lint-staged": "^16.1.2",
     "prettier": "^3.6.2",
-    "prettier-plugin-tailwindcss": "^0.6.14"
+    "prettier-plugin-tailwindcss": "^0.6.14",
+    "jest": "^29.7.0"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,json,css,md}": "prettier --write"
@@ -34,8 +34,5 @@
   },
   "overrides": {
     "picomatch": "^4.0.3"
-  },
-  "optionalDependencies": {
-    "encoding": "*"
   }
 }
