@@ -3,7 +3,14 @@
 import { SaveIcon } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { useRouter, useSearchParams } from 'next/navigation'
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
+import { AxiosError } from 'axios'
 import DownloadJSONButton from '../../../../components/buttons/DownloadJSONButton'
 import ImportJSONButton from '../../../../components/buttons/ImportJSONButton'
 import Modal from '../../../../components/DragResizeModal'
@@ -15,6 +22,28 @@ import { removeSortKeyVersion } from '../../../../lib/utils/removeSortKeyVersion
 import { useHttpClient } from '../../../../provider'
 import { DataSettingDataEntity } from '../../../../types'
 import JSONEditorComponent from '../../../../components/JSONEditorComponent'
+import type {
+  MapResult,
+  MappedData,
+} from '../../../master-settings/components/AddJsonData'
+import { ExceptionBase } from '../../../../exceptions/exception-base'
+
+function getErrorMessage(error: unknown): string {
+  if (error instanceof ExceptionBase) {
+    return error.getErrorMessage() || 'サーバーエラーが発生しました。'
+  }
+  if (error instanceof AxiosError) {
+    const message = error.response?.data?.message
+    if (message) {
+      return message
+    }
+    return 'サーバーエラーが発生しました。'
+  }
+  if (error instanceof Error) {
+    return error.message || 'サーバーエラーが発生しました。'
+  }
+  return 'サーバーエラーが発生しました。'
+}
 
 function ModalContent({
   open,
@@ -24,6 +53,7 @@ function ModalContent({
   setValue,
   saveData,
   onCloseModal,
+  relaxedSchema,
 }: {
   open: boolean
   setOpen: Dispatch<SetStateAction<boolean>>
@@ -32,6 +62,7 @@ function ModalContent({
   setValue: Dispatch<SetStateAction<string>>
   saveData: () => Promise<void>
   onCloseModal?: () => void
+  relaxedSchema?: boolean
 }) {
   useEffect(() => {
     if (!submitting && !open) {
@@ -45,20 +76,24 @@ function ModalContent({
         <JSONEditorComponent
           text={value}
           onChangeText={(json) => setValue(json)}
-          schema={{
-            type: 'array',
-            items: {
-              type: 'object',
-              properties: {
-                settingCode: { type: 'string' },
-                code: { type: 'string' },
-                name: { type: 'string' },
-                seq: { type: 'number' },
-                attributes: { type: 'object' },
-              },
-              required: ['settingCode', 'code', 'name', 'attributes'],
-            },
-          }}
+          schema={
+            relaxedSchema
+              ? { type: 'array', items: { type: 'object' } }
+              : {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      settingCode: { type: 'string' },
+                      code: { type: 'string' },
+                      name: { type: 'string' },
+                      seq: { type: 'number' },
+                      attributes: { type: 'object' },
+                    },
+                    required: ['settingCode', 'code', 'name', 'attributes'],
+                  },
+                }
+          }
         />
       </div>
       <div className="flex justify-end gap-2">
@@ -114,10 +149,14 @@ function TriggerButton({
 export default function AddJsonData({
   tenantCode,
   jsonValue,
+  inputSampleJson,
+  mapRawItem,
   onSave,
 }: {
   tenantCode: string
   jsonValue?: string
+  inputSampleJson?: string
+  mapRawItem?: (raw: unknown) => MapResult | null | undefined
   onSave: (setting: DataSettingDataEntity[]) => void
 }) {
   const router = useRouter()
@@ -202,9 +241,9 @@ export default function AddJsonData({
   }, [finishedCount, expectedCount, savedValue, onSave, toast, stop])
 
   const saveData = async () => {
-    let data: any
+    let parsedData: any
     try {
-      data = JSON.parse(value)
+      parsedData = JSON.parse(value)
     } catch {
       toast({
         title: 'JSON が無効です',
@@ -213,7 +252,101 @@ export default function AddJsonData({
       })
       return
     }
-    if (!isValidJsonData(data)) {
+
+    if (!Array.isArray(parsedData)) {
+      toast({
+        title: 'JSON が無効です',
+        description: '配列である必要があります。',
+        variant: 'destructive',
+      })
+      return
+    }
+
+    if (mapRawItem) {
+      const mapped = parsedData
+        .map((item: unknown) => mapRawItem(item))
+        .filter(Boolean) as MapResult[]
+
+      const hasSetting = mapped.some((m) => m.kind === 'setting')
+      if (hasSetting) {
+        toast({
+          title: 'マスター設定はこの画面から登録できません',
+          description: 'マスターデータ画面では kind: "data" のみ登録できます。',
+          variant: 'destructive',
+        })
+        return
+      }
+
+      const mappedData = mapped
+        .filter((m) => m.kind === 'data')
+        .map((m) => (m as MappedData).value)
+
+      if (mappedData.length === 0) {
+        toast({ title: 'データがありません', variant: 'destructive' })
+        return
+      }
+
+      const invalidData = mappedData.filter(
+        (x) =>
+          !x ||
+          typeof x.settingCode !== 'string' ||
+          typeof x.code !== 'string' ||
+          typeof x.name !== 'string' ||
+          typeof x.seq !== 'number' ||
+          typeof x.attributes !== 'object'
+      )
+      if (invalidData.length > 0) {
+        toast({
+          title: 'マッピング結果が無効です',
+          description:
+            'データの settingCode, code, name は文字列、seq は数値、attributes はオブジェクトである必要があります。',
+          variant: 'destructive',
+        })
+        return
+      }
+
+      setSubmitting(true)
+      try {
+        const res = (
+          await httpClient.post<DataSettingDataEntity[]>(API_URLS.MASTER.BULK, {
+            items: mappedData,
+          })
+        ).data
+
+        const processed = (res ?? []).map((item) => ({
+          ...item,
+          sk: removeSortKeyVersion(item.sk),
+        }))
+        const itemsWithRequestId = processed.filter((item) => item.requestId)
+
+        if (itemsWithRequestId.length === 0) {
+          setSubmitting(false)
+          setOpen(false)
+          setExpectedCount(0)
+          toast({
+            description: 'データに変更はありませんでした。',
+            variant: 'success',
+          })
+          onSave(processed)
+        } else {
+          setExpectedCount(itemsWithRequestId.length)
+          setSavedValue(processed)
+          start(itemsWithRequestId[0].requestId!)
+        }
+      } catch (error) {
+        console.error(error)
+        setSubmitting(false)
+        setExpectedCount(0)
+        toast({
+          title: 'データ登録に失敗しました。',
+          description: getErrorMessage(error),
+          variant: 'destructive',
+        })
+      }
+      return
+    }
+
+    if (!isValidJsonData(parsedData)) {
       toast({
         title: 'JSON が無効です',
         variant: 'destructive',
@@ -225,27 +358,29 @@ export default function AddJsonData({
     let res: DataSettingDataEntity[] | undefined = undefined
     try {
       res = (
-        await httpClient.post<DataSettingDataEntity[]>(
-          API_URLS.DATA.CREATE_BULK,
-          {
-            items: data,
-          }
-        )
+        await httpClient.post<DataSettingDataEntity[]>(API_URLS.MASTER.BULK, {
+          items: parsedData,
+        })
       ).data
     } catch (error) {
       console.error(error)
       setSubmitting(false)
       setExpectedCount(0)
       toast({
-        title: 'データ反映に失敗しました。',
+        title: 'データ登録に失敗しました。',
+        description: getErrorMessage(error),
         variant: 'destructive',
       })
       return
     }
 
-    const itemsWithRequestId = res.filter((item) => item.requestId)
+    const processed = (res ?? []).map((item) => ({
+      ...item,
+      sk: removeSortKeyVersion(item.sk),
+    }))
+    const itemsWithRequestId = processed.filter((item) => item.requestId)
+
     if (itemsWithRequestId.length === 0) {
-      // All items had no changes (not dirty)
       setSubmitting(false)
       setOpen(false)
       setExpectedCount(0)
@@ -253,38 +388,38 @@ export default function AddJsonData({
         description: 'データに変更はありませんでした。',
         variant: 'success',
       })
-      onSave(
-        res.map((item) => ({ ...item, sk: removeSortKeyVersion(item.sk) }))
-      )
+      onSave(processed)
     } else {
       setExpectedCount(itemsWithRequestId.length)
-      setSavedValue(
-        res.map((item) => ({ ...item, sk: removeSortKeyVersion(item.sk) }))
-      )
-      start(itemsWithRequestId[0].requestId)
+      setSavedValue(processed)
+      start(itemsWithRequestId[0].requestId!)
     }
   }
 
   const searchParam = useSearchParams()
-  const typeCode = searchParam.get('typeCode').split('#')[1]
+  const typeCode = searchParam.get('typeCode')?.split('#')[1]
 
-  const sampleDataJson = JSON.stringify([
-    {
-      settingCode: typeCode, // Get typeCodeId from url
-      name: '',
-      seq: 0,
-      code: '',
-      attributes: {
-        seq: 0,
-        code: '',
-        name: '',
-      },
-    },
-  ])
+  const sampleDataJson = useMemo(
+    () =>
+      JSON.stringify([
+        {
+          settingCode: typeCode,
+          name: '',
+          seq: 0,
+          code: '',
+          attributes: {
+            seq: 0,
+            code: '',
+            name: '',
+          },
+        },
+      ]),
+    [typeCode]
+  )
 
   useEffect(() => {
-    setValue(jsonValue || sampleDataJson)
-  }, [jsonValue])
+    setValue(jsonValue || inputSampleJson || sampleDataJson)
+  }, [jsonValue, inputSampleJson, sampleDataJson])
 
   return (
     <Modal>
@@ -299,6 +434,7 @@ export default function AddJsonData({
           saveData={saveData}
           setValue={setValue}
           submitting={submitting}
+          relaxedSchema={Boolean(mapRawItem)}
         />
       </Modal.Window>
     </Modal>
