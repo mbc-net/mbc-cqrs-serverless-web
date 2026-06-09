@@ -50,14 +50,11 @@ import { Paginate } from '../../../types/common'
 import { SearchPropsMasterData } from '../../../types/master-data'
 import { PaginateProps } from '../../../types/pagination'
 import AddJsonData from '../components/ActionBar/AddJsonData'
-import type { MapResult } from '../../master-settings/components/AddJsonData'
+import type { MapResult } from '../../../types/bulk-json-mapper'
 import '../../../components/JsonEditor'
 import { toast } from 'src/components/ui/use-toast'
 
-export type {
-  MapResult,
-  MappedData,
-} from '../../master-settings/components/AddJsonData'
+export type { MapResult, MappedData } from '../../../types/bulk-json-mapper'
 
 export enum AccordionValue {
   SETTING = 'setting',

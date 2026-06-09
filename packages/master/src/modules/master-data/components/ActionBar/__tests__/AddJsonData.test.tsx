@@ -96,7 +96,7 @@ jest.mock('../../../../../components/buttons/ImportJSONButton', () => {
 // Import after mocks
 import AddJsonData from '../AddJsonData'
 import { API_URLS } from '../../../../../lib/constants/url'
-import type { MapResult } from '../../../../master-settings/components/AddJsonData'
+import type { MapResult } from '../../../../../types/bulk-json-mapper'
 
 // Helper to set JSON value and trigger save
 async function setValueAndSave(jsonStr: string) {
@@ -204,7 +204,7 @@ describe('master-data/ActionBar/AddJsonData', () => {
     await waitFor(() => {
       expect(mockToast).toHaveBeenCalledWith(
         expect.objectContaining({
-          title: 'データ登録に失敗しました。',
+          title: 'データ反映に失敗しました。',
           variant: 'destructive',
         })
       )
@@ -352,6 +352,80 @@ describe('master-data/ActionBar/AddJsonData', () => {
         expect(mockToast).toHaveBeenCalledWith(
           expect.objectContaining({
             title: 'データがありません',
+            variant: 'destructive',
+          })
+        )
+      })
+      expect(mockPost).not.toHaveBeenCalled()
+    })
+
+    it('should reject empty settingCode in native path', async () => {
+      render(<AddJsonData {...defaultProps} />)
+
+      await setValueAndSave(
+        JSON.stringify([
+          {
+            settingCode: '',
+            code: 'C',
+            name: 'N',
+            seq: 0,
+            attributes: { code: 'C', name: 'N', seq: 0 },
+          },
+        ])
+      )
+
+      await waitFor(() => {
+        expect(mockToast).toHaveBeenCalledWith(
+          expect.objectContaining({
+            title: 'JSON が無効です',
+            variant: 'destructive',
+          })
+        )
+      })
+      expect(mockPost).not.toHaveBeenCalled()
+    })
+
+    it('should reject empty settingCode from mapper', async () => {
+      const invalidMapper = (): MapResult => ({
+        kind: 'data',
+        value: {
+          settingCode: '',
+          code: 'C',
+          name: 'N',
+          seq: 0,
+          attributes: { code: 'C', name: 'N', seq: 0 },
+        },
+      })
+
+      render(<AddJsonData {...defaultProps} mapRawItem={invalidMapper} />)
+
+      await setValueAndSave(JSON.stringify([{ raw: true }]))
+
+      await waitFor(() => {
+        expect(mockToast).toHaveBeenCalledWith(
+          expect.objectContaining({
+            title: 'マッピング結果が無効です',
+            variant: 'destructive',
+          })
+        )
+      })
+      expect(mockPost).not.toHaveBeenCalled()
+    })
+
+    it('should show error toast when mapRawItem throws', async () => {
+      const throwingMapper = () => {
+        throw new Error('mapper exploded')
+      }
+
+      render(<AddJsonData {...defaultProps} mapRawItem={throwingMapper} />)
+
+      await setValueAndSave(JSON.stringify([{ id: 'x' }]))
+
+      await waitFor(() => {
+        expect(mockToast).toHaveBeenCalledWith(
+          expect.objectContaining({
+            title: 'マッピングに失敗しました。',
+            description: 'mapper exploded',
             variant: 'destructive',
           })
         )

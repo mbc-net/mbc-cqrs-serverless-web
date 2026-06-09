@@ -10,7 +10,6 @@ import React, {
   useRef,
   useState,
 } from 'react'
-import { AxiosError } from 'axios'
 import DownloadJSONButton from '../../../components/buttons/DownloadJSONButton'
 import ImportJSONButton from '../../../components/buttons/ImportJSONButton'
 import Modal from '../../../components/DragResizeModal'
@@ -23,75 +22,12 @@ import { useHttpClient } from '../../../provider'
 import { DataSettingDataEntity, SettingDataEntity } from '../../../types'
 import { isValidBulkJson, sampleMixedJson } from '../schema'
 import JSONEditorComponent from '../../../components/JSONEditorComponent'
-import { ExceptionBase } from '../../../exceptions/exception-base'
-
-// Helper function to extract error message from API errors
-function getErrorMessage(error: unknown): string {
-  if (error instanceof ExceptionBase) {
-    return error.getErrorMessage() || 'サーバーエラーが発生しました。'
-  }
-  if (error instanceof AxiosError) {
-    const message = error.response?.data?.message
-    if (message) {
-      return message
-    }
-    return 'サーバーエラーが発生しました。'
-  }
-  if (error instanceof Error) {
-    return error.message || 'サーバーエラーが発生しました。'
-  }
-  return 'サーバーエラーが発生しました。'
-}
-
-// Mapping types for developer-provided mapper
-export type MappedSetting = {
-  kind: 'setting'
-  value: {
-    name: string
-    code: string
-    tenantCode?: string
-    settingValue: Record<string, any>
-  }
-}
-export type MappedData = {
-  kind: 'data'
-  value: {
-    settingCode: string
-    code: string
-    name: string
-    seq: number
-    attributes: Record<string, any>
-    tenantCode?: string
-  }
-}
-export type MapResult = MappedSetting | MappedData
-
-// Convert MapResult items to unified bulk format
-function mapResultToBulkItem(m: MapResult): {
-  name: string
-  code: string
-  attributes: object
-  tenantCode?: string
-  settingCode?: string
-  seq?: number
-} {
-  if (m.kind === 'setting') {
-    return {
-      name: m.value.name,
-      code: m.value.code,
-      tenantCode: m.value.tenantCode,
-      attributes: m.value.settingValue,
-    }
-  }
-  return {
-    name: m.value.name,
-    code: m.value.code,
-    settingCode: m.value.settingCode,
-    tenantCode: m.value.tenantCode,
-    seq: m.value.seq,
-    attributes: m.value.attributes,
-  }
-}
+import { getErrorMessage } from '../../../lib/utils/getErrorMessage'
+import {
+  isPlainObject,
+  mapResultToBulkItem,
+  type MapResult,
+} from '../../../types/bulk-json-mapper'
 
 function ModalContent({
   open,
@@ -376,7 +312,7 @@ export default function AddJsonData({
           if (
             typeof m.value.name !== 'string' ||
             typeof m.value.code !== 'string' ||
-            typeof m.value.settingValue !== 'object'
+            !isPlainObject(m.value.settingValue)
           ) {
             toast({
               title: 'マッピング結果が無効です',
@@ -389,10 +325,11 @@ export default function AddJsonData({
         } else {
           if (
             typeof m.value.settingCode !== 'string' ||
+            m.value.settingCode.trim() === '' ||
             typeof m.value.code !== 'string' ||
             typeof m.value.name !== 'string' ||
             typeof m.value.seq !== 'number' ||
-            typeof m.value.attributes !== 'object'
+            !isPlainObject(m.value.attributes)
           ) {
             toast({
               title: 'マッピング結果が無効です',
