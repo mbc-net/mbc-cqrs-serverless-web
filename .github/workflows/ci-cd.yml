@@ -83,7 +83,6 @@ jobs:
         with:
           node-version: 22
           cache: npm
-          registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
         run: npm ci --ignore-scripts
@@ -188,6 +187,7 @@ jobs:
           npx lerna version ${{ steps.version.outputs.version }} --yes --no-git-tag-version --no-push --exact --force-publish --amend
           git add -A
           git commit -m "chore: version packages for release" || echo "No changes to commit"
+          # Lerna v9+ uses npm OIDC trusted publishing (requires id-token: write and npm >= 11.5.1)
           npx lerna publish from-package --yes --dist-tag ${{ steps.release-type.outputs.tag }} --no-git-tag-version --no-push
 
       - name: Publish to npm (Production)
@@ -197,6 +197,7 @@ jobs:
           npx lerna version ${{ steps.version.outputs.version }} --yes --no-git-tag-version --no-push --exact --force-publish --amend
           git add -A
           git commit -m "chore: version packages for release" || echo "No changes to commit"
+          # Lerna v9+ uses npm OIDC trusted publishing (requires id-token: write and npm >= 11.5.1)
           npx lerna publish from-package --yes --no-git-tag-version --no-push
 
       - name: Skip publish (no changes)
