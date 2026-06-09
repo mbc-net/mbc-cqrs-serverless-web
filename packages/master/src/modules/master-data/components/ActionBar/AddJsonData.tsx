@@ -90,7 +90,13 @@ function ModalContent({
                       seq: { type: 'number' },
                       attributes: { type: 'object' },
                     },
-                    required: ['settingCode', 'code', 'name', 'attributes'],
+                    required: [
+                      'settingCode',
+                      'code',
+                      'name',
+                      'seq',
+                      'attributes',
+                    ],
                   },
                 }
           }
@@ -293,7 +299,7 @@ export default function AddJsonData({
           typeof x.code !== 'string' ||
           typeof x.name !== 'string' ||
           typeof x.seq !== 'number' ||
-          typeof x.attributes !== 'object'
+          !isObject(x.attributes)
       )
       if (invalidData.length > 0) {
         toast({
