@@ -36,7 +36,8 @@ import { MasterRdsEntity } from '../../../types/MasterRdsEntity'
 import { MasterRdsListEntity } from '../../../types/MasterRdsListEntity'
 import { PaginateProps } from '../../../types/pagination'
 import { DataTableColumnHeader } from '../../../components/table/data-table-column-header'
-import AddJsonData, { MapResult } from '../components/AddJsonData'
+import AddJsonData from '../components/AddJsonData'
+import type { MapResult } from '../../../types/bulk-json-mapper'
 import '../../../components/JsonEditor'
 
 // Re-export mapper types for external usage
@@ -44,7 +45,7 @@ export type {
   MapResult,
   MappedSetting,
   MappedData,
-} from '../components/AddJsonData'
+} from '../../../types/bulk-json-mapper'
 
 // type MappedSetting = {
 //   kind: 'setting'

@@ -150,6 +150,12 @@ export const isValidMasterDataJson = (data: any) => {
     ) {
       return false
     }
+    if (
+      typeof item.settingCode !== 'string' ||
+      item.settingCode.trim() === ''
+    ) {
+      return false
+    }
     if (typeof item.seq !== 'number') {
       return false
     }
