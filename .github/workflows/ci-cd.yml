@@ -55,6 +55,8 @@ jobs:
           severity: 'HIGH,CRITICAL'
           format: 'sarif'
           output: 'trivy-results.sarif'
+        env:
+          TRIVY_IGNOREFILE: .trivyignore.yaml
         continue-on-error: true
 
       - name: Upload Trivy scan results

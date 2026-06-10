@@ -1,0 +1,114 @@
+# Accepted risk: Next.js 14.x has no security patches for these CVEs.
+# Remediation requires Next.js 15+ upgrade (peer dep major, nuqs v2 migration).
+# Review by expired_at; remove entries after Next 15 upgrade.
+vulnerabilities:
+  - id: GHSA-q4gf-8mx6-v5v3
+    paths:
+      - package-lock.json
+    expired_at: 2026-09-01
+    statement: Next 14.x — no patch; upgrade to 15.5.15+ planned
+  - id: GHSA-8h8q-6873-q5fj
+    paths:
+      - package-lock.json
+    expired_at: 2026-09-01
+    statement: Next 14.x — no patch; upgrade to 15.5.16+ planned
+  - id: GHSA-h25m-26qc-wcjf
+    paths:
+      - package-lock.json
+    expired_at: 2026-09-01
+    statement: Next 14.x — no patch; upgrade to 15.5.10+ planned
+  - id: CVE-2026-44578
+    paths:
+      - package-lock.json
+    expired_at: 2026-09-01
+    statement: Next 14.x — no patch; upgrade to 15.5.16+ planned
+  - id: CVE-2026-44573
+    paths:
+      - package-lock.json
+    expired_at: 2026-09-01
+    statement: Next 14.x — no patch; upgrade to 15.5.16+ planned
+  - id: CVE-2026-44581
+    paths:
+      - package-lock.json
+    expired_at: 2026-09-01
+    statement: Next 14.x — no patch; upgrade to 15.5.16+ planned
+  - id: CVE-2026-44580
+    paths:
+      - package-lock.json
+    expired_at: 2026-09-01
+    statement: Next 14.x — no patch; upgrade to 15.5.16+ planned
+  - id: CVE-2026-44577
+    paths:
+      - package-lock.json
+    expired_at: 2026-09-01
+    statement: Next 14.x — no patch; upgrade to 15.5.16+ planned
+  - id: CVE-2026-44576
+    paths:
+      - package-lock.json
+    expired_at: 2026-09-01
+    statement: Next 14.x — no patch; upgrade to 15.5.16+ planned
+  - id: CVE-2026-29057
+    paths:
+      - package-lock.json
+    expired_at: 2026-09-01
+    statement: Next 14.x — no patch; upgrade to 15.5.13+ planned
+  - id: CVE-2026-27980
+    paths:
+      - package-lock.json
+    expired_at: 2026-09-01
+    statement: Next 14.x — no patch; upgrade to 15.5.14+ planned
+  - id: GHSA-9g9p-9gw9-jx7f
+    paths:
+      - package-lock.json
+    expired_at: 2026-09-01
+    statement: Next 14.x — no patch; upgrade planned
+  - id: GHSA-ggv3-7p47-pfv8
+    paths:
+      - package-lock.json
+    expired_at: 2026-09-01
+    statement: Next 14.x — no patch; upgrade planned
+  - id: GHSA-3x4c-7xq6-9pq8
+    paths:
+      - package-lock.json
+    expired_at: 2026-09-01
+    statement: Next 14.x — no patch; upgrade planned
+  - id: GHSA-3g8h-86w9-wvmq
+    paths:
+      - package-lock.json
+    expired_at: 2026-09-01
+    statement: Next 14.x — no patch; upgrade planned
+  - id: GHSA-ffhc-5mcf-pf4q
+    paths:
+      - package-lock.json
+    expired_at: 2026-09-01
+    statement: Next 14.x — no patch; upgrade planned
+  - id: GHSA-vfv6-92ff-j949
+    paths:
+      - package-lock.json
+    expired_at: 2026-09-01
+    statement: Next 14.x — no patch; upgrade planned
+  - id: GHSA-gx5p-jg67-6x7h
+    paths:
+      - package-lock.json
+    expired_at: 2026-09-01
+    statement: Next 14.x — no patch; upgrade planned
+  - id: GHSA-h64f-5h5j-jqjh
+    paths:
+      - package-lock.json
+    expired_at: 2026-09-01
+    statement: Next 14.x — no patch; upgrade planned
+  - id: GHSA-c4j6-fc7j-m34r
+    paths:
+      - package-lock.json
+    expired_at: 2026-09-01
+    statement: Next 14.x — no patch; upgrade planned
+  - id: GHSA-wfc6-r584-vfw7
+    paths:
+      - package-lock.json
+    expired_at: 2026-09-01
+    statement: Next 14.x — no patch; upgrade planned
+  - id: GHSA-36qx-fr4f-26g5
+    paths:
+      - package-lock.json
+    expired_at: 2026-09-01
+    statement: Next 14.x — no patch; upgrade planned
