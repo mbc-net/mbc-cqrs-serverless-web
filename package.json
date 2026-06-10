@@ -20,7 +20,7 @@
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
     "husky": "^9.1.7",
-    "lerna": "^8.2.4",
+    "lerna": "^9.0.0",
     "lint-staged": "^16.1.2",
     "prettier": "^3.6.2",
     "prettier-plugin-tailwindcss": "^0.6.14",
@@ -33,6 +33,17 @@
     "@swc/helpers": "^0.5.17"
   },
   "overrides": {
-    "picomatch": "^4.0.3"
+    "picomatch": "^4.0.3",
+    "axios": "^1.16.0",
+    "js-cookie": "^3.0.7",
+    "uuid": "^11.1.1",
+    "postcss": "^8.5.10",
+    "@aws-amplify/api-rest@3.5.18": {
+      "axios": "^1.16.0"
+    },
+    "amazon-cognito-identity-js@6.3.16": {
+      "js-cookie": "^3.0.7"
+    },
+    "typescript": "^5.9.3"
   }
 }

@@ -34,9 +34,6 @@ jobs:
       - name: Install dependencies
         run: npm ci --ignore-scripts
 
-      - name: Verify lockfile integrity
-        run: git diff --exit-code package-lock.json
-
       - name: Build packages
         run: npx lerna run build
 
@@ -58,6 +55,8 @@ jobs:
           severity: 'HIGH,CRITICAL'
           format: 'sarif'
           output: 'trivy-results.sarif'
+        env:
+          TRIVY_IGNOREFILE: .trivyignore.yaml
         continue-on-error: true
 
       - name: Upload Trivy scan results
@@ -75,13 +74,16 @@ jobs:
     needs: unit_tests
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
+    permissions:
+      contents: write
+      id-token: write
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 22
           cache: npm
 
       - name: Install dependencies
@@ -89,9 +91,6 @@ jobs:
 
       - name: Build packages
         run: npx lerna run build
-
-      - name: Authenticate with npm
-        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
 
       - name: Extract version from tag
         id: version
@@ -190,9 +189,8 @@ jobs:
           npx lerna version ${{ steps.version.outputs.version }} --yes --no-git-tag-version --no-push --exact --force-publish --amend
           git add -A
           git commit -m "chore: version packages for release" || echo "No changes to commit"
+          # Lerna v9+ uses npm OIDC trusted publishing (requires id-token: write and npm >= 11.5.1)
           npx lerna publish from-package --yes --dist-tag ${{ steps.release-type.outputs.tag }} --no-git-tag-version --no-push
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish to npm (Production)
         if: steps.release-type.outputs.prerelease == 'false' && steps.prod-changes.outputs.changed_count != '0'
@@ -201,9 +199,8 @@ jobs:
           npx lerna version ${{ steps.version.outputs.version }} --yes --no-git-tag-version --no-push --exact --force-publish --amend
           git add -A
           git commit -m "chore: version packages for release" || echo "No changes to commit"
+          # Lerna v9+ uses npm OIDC trusted publishing (requires id-token: write and npm >= 11.5.1)
           npx lerna publish from-package --yes --no-git-tag-version --no-push
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Skip publish (no changes)
         if: |

@@ -95,6 +95,8 @@ jest.mock('../../../../../components/buttons/ImportJSONButton', () => {
 
 // Import after mocks
 import AddJsonData from '../AddJsonData'
+import { API_URLS } from '../../../../../lib/constants/url'
+import type { MapResult } from '../../../../../types/bulk-json-mapper'
 
 // Helper to set JSON value and trigger save
 async function setValueAndSave(jsonStr: string) {
@@ -105,6 +107,18 @@ async function setValueAndSave(jsonStr: string) {
   await act(async () => {
     fireEvent.click(saveButton)
   })
+}
+
+const validNativeItem = {
+  settingCode: 'SETTING_CODE',
+  code: 'CODE_1',
+  name: 'Item 1',
+  seq: 1,
+  attributes: {
+    code: 'CODE_1',
+    name: 'Item 1',
+    seq: 1,
+  },
 }
 
 describe('master-data/ActionBar/AddJsonData', () => {
@@ -120,7 +134,7 @@ describe('master-data/ActionBar/AddJsonData', () => {
     mockOnChangeText = null
   })
 
-  it('should call API with valid data and start subscription', async () => {
+  it('should call /master-bulk with valid data and start subscription', async () => {
     const responseData = [
       {
         pk: 'MASTER#TEST_TENANT',
@@ -130,7 +144,11 @@ describe('master-data/ActionBar/AddJsonData', () => {
         name: 'Item 1',
         version: 1,
         requestId: 'req-1',
-        attributes: { key: 'val' },
+        attributes: {
+          code: 'CODE_1',
+          name: 'Item 1',
+          seq: 1,
+        },
         seq: 1,
       },
     ]
@@ -138,27 +156,12 @@ describe('master-data/ActionBar/AddJsonData', () => {
 
     render(<AddJsonData {...defaultProps} />)
 
-    await setValueAndSave(
-      JSON.stringify([
-        {
-          settingCode: 'SETTING_CODE',
-          code: 'CODE_1',
-          name: 'Item 1',
-          seq: 1,
-          attributes: { key: 'val' },
-        },
-      ])
-    )
+    await setValueAndSave(JSON.stringify([validNativeItem]))
 
     await waitFor(() => {
-      expect(mockPost).toHaveBeenCalledWith(
-        expect.any(String),
-        expect.objectContaining({
-          items: expect.arrayContaining([
-            expect.objectContaining({ code: 'CODE_1' }),
-          ]),
-        })
-      )
+      expect(mockPost).toHaveBeenCalledWith(API_URLS.MASTER.BULK, {
+        items: [validNativeItem],
+      })
     })
 
     await waitFor(() => {
@@ -166,12 +169,18 @@ describe('master-data/ActionBar/AddJsonData', () => {
     })
   })
 
-  it('should show error toast on invalid JSON data', async () => {
+  it('should show error toast on invalid JSON data (missing seq)', async () => {
     render(<AddJsonData {...defaultProps} />)
 
-    // Set JSON that fails validation (missing settingCode)
     await setValueAndSave(
-      JSON.stringify([{ code: 'C', name: 'N', attributes: {} }])
+      JSON.stringify([
+        {
+          settingCode: 'SETTING_CODE',
+          code: 'C',
+          name: 'N',
+          attributes: {},
+        },
+      ])
     )
 
     await waitFor(() => {
@@ -190,17 +199,7 @@ describe('master-data/ActionBar/AddJsonData', () => {
 
     render(<AddJsonData {...defaultProps} />)
 
-    await setValueAndSave(
-      JSON.stringify([
-        {
-          settingCode: 'SETTING_CODE',
-          code: 'CODE_1',
-          name: 'Item 1',
-          seq: 1,
-          attributes: {},
-        },
-      ])
-    )
+    await setValueAndSave(JSON.stringify([validNativeItem]))
 
     await waitFor(() => {
       expect(mockToast).toHaveBeenCalledWith(
@@ -221,7 +220,11 @@ describe('master-data/ActionBar/AddJsonData', () => {
         code: 'CODE_1',
         name: 'Item 1',
         version: 1,
-        attributes: {},
+        attributes: {
+          code: 'CODE_1',
+          name: 'Item 1',
+          seq: 1,
+        },
         seq: 1,
       },
     ]
@@ -229,17 +232,7 @@ describe('master-data/ActionBar/AddJsonData', () => {
 
     render(<AddJsonData {...defaultProps} />)
 
-    await setValueAndSave(
-      JSON.stringify([
-        {
-          settingCode: 'SETTING_CODE',
-          code: 'CODE_1',
-          name: 'Item 1',
-          seq: 1,
-          attributes: {},
-        },
-      ])
-    )
+    await setValueAndSave(JSON.stringify([validNativeItem]))
 
     await waitFor(() => {
       expect(mockToast).toHaveBeenCalledWith(
@@ -270,5 +263,233 @@ describe('master-data/ActionBar/AddJsonData', () => {
       )
     })
     expect(mockPost).not.toHaveBeenCalled()
+  })
+
+  describe('mapRawItem path', () => {
+    const mapRawItem = (raw: unknown): MapResult | null => {
+      const r = raw as { id?: string; label?: string }
+      if (!r?.id) return null
+      return {
+        kind: 'data',
+        value: {
+          settingCode: 'SETTING_CODE',
+          code: r.id,
+          name: r.label ?? r.id,
+          seq: 0,
+          attributes: { code: r.id, name: r.label ?? r.id, seq: 0 },
+        },
+      }
+    }
+
+    it('should post mapped items to /master-bulk on happy path', async () => {
+      mockPost.mockResolvedValue({
+        data: [
+          {
+            pk: 'MASTER#TEST_TENANT',
+            sk: 'SETTING_CODE#EXT_1@1',
+            requestId: 'req-map-1',
+            code: 'EXT_1',
+            name: 'External 1',
+            attributes: {},
+            seq: 0,
+          },
+        ],
+      })
+
+      render(<AddJsonData {...defaultProps} mapRawItem={mapRawItem} />)
+
+      await setValueAndSave(
+        JSON.stringify([{ id: 'EXT_1', label: 'External 1' }])
+      )
+
+      await waitFor(() => {
+        expect(mockPost).toHaveBeenCalledWith(API_URLS.MASTER.BULK, {
+          items: [
+            {
+              settingCode: 'SETTING_CODE',
+              code: 'EXT_1',
+              name: 'External 1',
+              seq: 0,
+              attributes: { code: 'EXT_1', name: 'External 1', seq: 0 },
+            },
+          ],
+        })
+      })
+      expect(mockStart).toHaveBeenCalledWith('req-map-1')
+    })
+
+    it('should reject kind: setting without calling API', async () => {
+      const mixedMapper = (): MapResult => ({
+        kind: 'setting',
+        value: {
+          name: 'S',
+          code: 'S',
+          settingValue: { fields: [] },
+        },
+      })
+
+      render(<AddJsonData {...defaultProps} mapRawItem={mixedMapper} />)
+
+      await setValueAndSave(JSON.stringify([{ anything: true }]))
+
+      await waitFor(() => {
+        expect(mockToast).toHaveBeenCalledWith(
+          expect.objectContaining({
+            title: 'マスター設定はこの画面から登録できません',
+            variant: 'destructive',
+          })
+        )
+      })
+      expect(mockPost).not.toHaveBeenCalled()
+    })
+
+    it('should show empty-data toast when mapper returns no items', async () => {
+      render(<AddJsonData {...defaultProps} mapRawItem={() => null} />)
+
+      await setValueAndSave(JSON.stringify([{ id: 'skip' }]))
+
+      await waitFor(() => {
+        expect(mockToast).toHaveBeenCalledWith(
+          expect.objectContaining({
+            title: 'データがありません',
+            variant: 'destructive',
+          })
+        )
+      })
+      expect(mockPost).not.toHaveBeenCalled()
+    })
+
+    it('should reject empty settingCode in native path', async () => {
+      render(<AddJsonData {...defaultProps} />)
+
+      await setValueAndSave(
+        JSON.stringify([
+          {
+            settingCode: '',
+            code: 'C',
+            name: 'N',
+            seq: 0,
+            attributes: { code: 'C', name: 'N', seq: 0 },
+          },
+        ])
+      )
+
+      await waitFor(() => {
+        expect(mockToast).toHaveBeenCalledWith(
+          expect.objectContaining({
+            title: 'JSON が無効です',
+            variant: 'destructive',
+          })
+        )
+      })
+      expect(mockPost).not.toHaveBeenCalled()
+    })
+
+    it('should reject empty settingCode from mapper', async () => {
+      const invalidMapper = (): MapResult => ({
+        kind: 'data',
+        value: {
+          settingCode: '',
+          code: 'C',
+          name: 'N',
+          seq: 0,
+          attributes: { code: 'C', name: 'N', seq: 0 },
+        },
+      })
+
+      render(<AddJsonData {...defaultProps} mapRawItem={invalidMapper} />)
+
+      await setValueAndSave(JSON.stringify([{ raw: true }]))
+
+      await waitFor(() => {
+        expect(mockToast).toHaveBeenCalledWith(
+          expect.objectContaining({
+            title: 'マッピング結果が無効です',
+            variant: 'destructive',
+          })
+        )
+      })
+      expect(mockPost).not.toHaveBeenCalled()
+    })
+
+    it('should show error toast when mapRawItem throws', async () => {
+      const throwingMapper = () => {
+        throw new Error('mapper exploded')
+      }
+
+      render(<AddJsonData {...defaultProps} mapRawItem={throwingMapper} />)
+
+      await setValueAndSave(JSON.stringify([{ id: 'x' }]))
+
+      await waitFor(() => {
+        expect(mockToast).toHaveBeenCalledWith(
+          expect.objectContaining({
+            title: 'マッピングに失敗しました。',
+            description: 'mapper exploded',
+            variant: 'destructive',
+          })
+        )
+      })
+      expect(mockPost).not.toHaveBeenCalled()
+    })
+
+    it('should reject invalid mapped data (attributes null)', async () => {
+      const invalidMapper = (): MapResult => ({
+        kind: 'data',
+        value: {
+          settingCode: 'SETTING_CODE',
+          code: 'C',
+          name: 'N',
+          seq: 0,
+          attributes: null as unknown as Record<string, unknown>,
+        },
+      })
+
+      render(<AddJsonData {...defaultProps} mapRawItem={invalidMapper} />)
+
+      await setValueAndSave(JSON.stringify([{ raw: true }]))
+
+      await waitFor(() => {
+        expect(mockToast).toHaveBeenCalledWith(
+          expect.objectContaining({
+            title: 'マッピング結果が無効です',
+            variant: 'destructive',
+          })
+        )
+      })
+      expect(mockPost).not.toHaveBeenCalled()
+    })
+
+    it('should show no-changes toast when mapper response has no requestId', async () => {
+      mockPost.mockResolvedValue({
+        data: [
+          {
+            pk: 'MASTER#TEST_TENANT',
+            sk: 'SETTING_CODE#EXT_2',
+            code: 'EXT_2',
+            name: 'External 2',
+            attributes: {},
+            seq: 0,
+          },
+        ],
+      })
+
+      render(<AddJsonData {...defaultProps} mapRawItem={mapRawItem} />)
+
+      await setValueAndSave(
+        JSON.stringify([{ id: 'EXT_2', label: 'External 2' }])
+      )
+
+      await waitFor(() => {
+        expect(mockToast).toHaveBeenCalledWith(
+          expect.objectContaining({
+            description: 'データに変更はありませんでした。',
+            variant: 'success',
+          })
+        )
+      })
+      expect(mockOnSave).toHaveBeenCalled()
+      expect(mockStart).not.toHaveBeenCalled()
+    })
   })
 })

@@ -50,8 +50,11 @@ import { Paginate } from '../../../types/common'
 import { SearchPropsMasterData } from '../../../types/master-data'
 import { PaginateProps } from '../../../types/pagination'
 import AddJsonData from '../components/ActionBar/AddJsonData'
+import type { MapResult } from '../../../types/bulk-json-mapper'
 import '../../../components/JsonEditor'
 import { toast } from 'src/components/ui/use-toast'
+
+export type { MapResult, MappedData } from '../../../types/bulk-json-mapper'
 
 export enum AccordionValue {
   SETTING = 'setting',
@@ -59,7 +62,13 @@ export enum AccordionValue {
   DATA_RESULT = 'data-result',
 }
 
-export default function MasterData() {
+export default function MasterData({
+  inputSampleJson,
+  mapRawItem,
+}: {
+  inputSampleJson?: string
+  mapRawItem?: (raw: unknown) => MapResult | null | undefined
+}) {
   const user = useUserContext()
   const tenantCode = user.tenantCode
   const urlProvider = useUrlProvider()
@@ -540,6 +549,8 @@ export default function MasterData() {
                 <div className="my-3 flex justify-end gap-4 px-3">
                   <AddJsonData
                     tenantCode={tenantCode}
+                    inputSampleJson={inputSampleJson}
+                    mapRawItem={mapRawItem}
                     onSave={async () => {
                       // Refresh data after all items are successfully created
                       await initSearch()
