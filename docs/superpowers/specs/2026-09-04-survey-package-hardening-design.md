@@ -223,6 +223,8 @@ dist/
 
 Bỏ hai subpath `./SurveyTemplatePage` và `./EditSurveyTemplatePage` khỏi `exports`; hai component lấy từ entry gốc (`import { SurveyTemplatePage } from '@mbc-cqrs-serverless/survey-web'`). Giữ `./SurveyForm`, `./styles`, `./styles.css`.
 
+Đánh đổi đã biết: app tiêu thụ đang dùng hai subpath này với `dynamic()` để tách code theo route (xem 3.6). Sau thay đổi, ba route dưới `/admin/survey-management` sẽ nạp cả entry gốc — tức có thêm `SurveyForm` và phần dùng chung — thay vì chỉ đúng template page cần thiết. Chấp nhận, đổi lấy `dist` gọn và không nhân bản code giữa các entry.
+
 **Sửa trong `tsup.config.ts`:**
 
 | Chỗ                                           | Vấn đề                                                                                                 | Xử lý                                                              |
@@ -237,6 +239,32 @@ Bỏ hai subpath `./SurveyTemplatePage` và `./EditSurveyTemplatePage` khỏi `e
 **Thêm:** `postcss-prefix-selector` nối vào chuỗi postcss trong `onSuccess`; `treeshake: true`. Giữ `format: ['cjs', 'esm']`, `dts: true`, `sourcemap: true`, không minify — `dist` là để đọc.
 
 **Không lấy từ đoạn config tham khảo:** `format: ['cjs']` (survey đang trỏ `.mjs` trong `exports`, drop ESM là vỡ); `inlineSvgPlugin` (package không có file `.svg` nào — icon đến từ `lucide-react`); `dts.resolve: false` cho `@date-fns/tz`; `scripts/extract-antd-css.cjs`; các external `react-i18next`, `react-router-dom`, `i18next`. Tất cả đều thuộc về một package khác.
+
+### 3.6 App tiêu thụ: `mebs-builshiru-web`
+
+Repo `/data/Workspace/mcp/mebs-builshiru-web` đang dùng `@mbc-cqrs-serverless/survey-web@^0.0.43`. Đây là consumer thật đã biết, nên breaking change phải được sửa kèm ở đó.
+
+**Quan sát xác nhận chẩn đoán:**
+
+- `usehooks-ts` và `@dnd-kit/utilities` có mặt trong `node_modules` của app nhưng **không được khai báo trong `package.json` của app** — chúng lọt vào nhờ hoisting transitive. App chạy được là do may, không phải do đúng.
+- `src/app/layout.tsx` nạp `@mbc-cqrs-serverless/survey-web/styles.css` **sau** `./globals.css` của chính app. Preflight 57 KB chưa scope của thư viện đang đè lên toàn bộ app — đúng feedback #3 ngoài đời thực. Sau khi scope, thứ tự import này không còn ảnh hưởng.
+
+**Thay đổi cần làm ở app:**
+
+| File                                              | Thay đổi                                                                   |
+| ------------------------------------------------- | -------------------------------------------------------------------------- |
+| `src/app/admin/survey-management/page.tsx`        | `import('…/survey-web/SurveyTemplatePage')` → `import('…/survey-web')`     |
+| `src/app/admin/survey-management/create/page.tsx` | `import('…/survey-web/EditSurveyTemplatePage')` → `import('…/survey-web')` |
+| `src/app/admin/survey-management/[id]/page.tsx`   | như trên                                                                   |
+| Ba file trên                                      | Bọc thêm `SurveyConfigProvider` (xem 3.2) quanh template page              |
+
+**Không cần đổi:**
+
+- Hai call-site `SurveyForm` (`SurveyTemplatePreview.tsx`, `SurveyTemplateAnswer.tsx`) — subpath `./SurveyForm` được giữ.
+- `onSubmit` của `SurveyForm` — tham số `meta` là bổ sung, chữ ký cũ vẫn đúng.
+- `import '@mbc-cqrs-serverless/survey-web/styles.css'` trong `layout.tsx`.
+
+**Ngoài phạm vi nhưng cần biết:** app cũng nạp `@mbc-cqrs-serverless/master-web/styles.css`, vốn cũng là preflight chưa scope. Sau lần này, survey hết đè lên app nhưng master thì chưa — nếu app còn thấy CSS bị đè thì thủ phạm còn lại là master.
 
 ## 4. Kiểm thử
 
@@ -265,6 +293,7 @@ Mỗi bước một commit, tự kiểm chứng được trước khi sang bư�
 | 5   | `SurveyConfigProvider`, gỡ Amplify khỏi lõi                                   | Test hiện có + `tsc --noEmit`                                             |
 | 6   | tsup config và hình dạng `dist`                                               | `ls dist` — 11 file, không còn `chunk-*`                                  |
 | 7   | Smoke test `npm pack` vào app Next                                            | Thủ công                                                                  |
+| 8   | Cập nhật `mebs-builshiru-web` theo 3.6                                        | `next build` của app                                                      |
 
 Bước 5 phải xong trước bước 6: chừng nào `aws-amplify` còn trong lõi thì chưa thể bật `noExternal` bundle toàn bộ.
 
