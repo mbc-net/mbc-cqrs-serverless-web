@@ -22,6 +22,7 @@ import {
   DropdownMenuTrigger,
 } from '../../ui/dropdown-menu'
 import { Input } from '../../ui/input'
+import { createId } from '../../utils'
 import {
   ArrowUpDown,
   ChevronDown,
@@ -81,10 +82,8 @@ export const SectionHeaderCreator: React.FC<SectionHeaderCreatorProps> = ({
     if (endIndex === -1) endIndex = allItems.length
 
     const itemsToDuplicate = allItems.slice(itemIndex, endIndex)
-    const duplicatedItems = itemsToDuplicate.map((item, i) => {
-      const newId = `${
-        item.type === 'section-header' ? 'sec' : 'q'
-      }_${Date.now() + i}`
+    const duplicatedItems = itemsToDuplicate.map((item) => {
+      const newId = createId(item.type === 'section-header' ? 'sec' : 'q')
       if (item.type === 'section-header') {
         return { ...item, id: newId, title: `${item.title} (Copy)` }
       }

@@ -25,7 +25,7 @@ import {
 } from '../../ui/select'
 import { Separator } from '../../ui/separator'
 import { Switch } from '../../ui/switch'
-import { cn } from '../../utils'
+import { cn, createId } from '../../utils'
 import type { useSortable } from '@dnd-kit/sortable'
 import {
   AlignLeft,
@@ -43,7 +43,7 @@ import {
   Trash2,
 } from 'lucide-react'
 import type React from 'react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import type {
   DateQuestionType,
@@ -145,18 +145,11 @@ export const QuestionCreator: React.FC<QuestionCreatorProps> = ({
 
   const isActive = activeElementId === questionId
 
-  // Sync question ID with question label
-  useEffect(() => {
-    if (questionLabelValue) {
-      setValue(`${itemPath}.id`, questionLabelValue)
-    }
-  }, [questionLabelValue, itemPath, setValue])
-
   const handleDuplicate = () => {
     const currentItemData = getValues(`items.${itemIndex}`)
     const duplicatedItem = {
       ...JSON.parse(JSON.stringify(currentItemData)),
-      id: `q_${Date.now()}`,
+      id: createId('q'),
     }
     insertItem(itemIndex + 1, duplicatedItem)
     setPendingActiveDataId(duplicatedItem.id)
