@@ -3,7 +3,16 @@ module.exports = {
   displayName: 'survey',
   testEnvironment: 'jsdom',
   transform: {
-    '^.+\\.(t|j)sx?$': '@swc/jest',
+    '^.+\\.(t|j)sx?$': [
+      '@swc/jest',
+      {
+        jsc: {
+          transform: {
+            react: { runtime: 'automatic' },
+          },
+        },
+      },
+    ],
   },
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
