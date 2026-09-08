@@ -20,9 +20,21 @@ import type {
 import { cn } from '@/utils'
 
 type SurveyAnswers = Record<string, string | string[] | undefined>
+
+/**
+ * Answers carry question ids as keys, so a consumer would otherwise need the
+ * schema on hand to know what was asked. `meta` travels alongside them.
+ */
+export interface SurveyAnswerMeta {
+  id: string
+  label: string
+  type: SurveyQuestionItemType['type']
+  value: string | string[] | undefined
+}
+
 interface SurveyFormProps {
   schema: SurveySchemaType
-  onSubmit: (answers: SurveyAnswers) => void
+  onSubmit: (answers: SurveyAnswers, meta: SurveyAnswerMeta[]) => void
   children?: React.ReactNode
   disabled?: boolean
 }
@@ -164,7 +176,18 @@ export const SurveyForm: React.FC<SurveyFormProps> = ({
     }
   }
   const onFormSubmit = (data: SurveyAnswers) => {
-    onSubmit(data)
+    const meta: SurveyAnswerMeta[] = surveyPages.flatMap((page) =>
+      page.questions.map((question) => ({
+        id: question.id,
+        // `SurveyQuestionItemType` excludes section headers at runtime, but
+        // the discriminated union doesn't narrow cleanly here, so guard the
+        // read the same way question-creator.tsx does elsewhere.
+        label: 'label' in question ? question.label : '',
+        type: question.type,
+        value: data[question.id],
+      }))
+    )
+    onSubmit(data, meta)
   }
 
   if (!currentSection) {
