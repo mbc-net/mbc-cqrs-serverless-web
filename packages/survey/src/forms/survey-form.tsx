@@ -19,7 +19,7 @@ import type {
 } from '../types/schema' // Corrected import path
 import { cn } from '@/utils'
 
-type SurveyAnswers = Record<string, string | string[] | undefined>
+export type SurveyAnswers = Record<string, string | string[] | undefined>
 
 /**
  * Answers carry question ids as keys, so a consumer would otherwise need the
@@ -37,6 +37,12 @@ interface SurveyFormProps {
   onSubmit: (answers: SurveyAnswers, meta: SurveyAnswerMeta[]) => void
   children?: React.ReactNode
   disabled?: boolean
+  /**
+   * A previously saved answer, to edit it. Read once on mount: render the form
+   * after the answer has loaded, or remount it with `key`.
+   */
+  defaultValues?: SurveyAnswers
+  submitLabel?: string
 }
 
 interface SurveyPage {
@@ -53,8 +59,10 @@ export const SurveyForm: React.FC<SurveyFormProps> = ({
   onSubmit,
   children,
   disabled = false,
+  defaultValues,
+  submitLabel = 'アンケートを送信', // Submit Survey
 }) => {
-  const methods = useForm<SurveyAnswers>()
+  const methods = useForm<SurveyAnswers>({ defaultValues })
   const { handleSubmit, trigger, getValues, watch } = methods
 
   const surveyPages = useMemo((): SurveyPage[] => {
@@ -187,7 +195,12 @@ export const SurveyForm: React.FC<SurveyFormProps> = ({
         value: data[question.id],
       }))
     )
-    onSubmit(data, meta)
+    // Rebuilt from the schema so answers to questions deleted since
+    // `defaultValues` was saved don't ride along.
+    const answers: SurveyAnswers = Object.fromEntries(
+      meta.map(({ id, value }) => [id, value])
+    )
+    onSubmit(answers, meta)
   }
 
   if (!currentSection) {
@@ -314,8 +327,7 @@ export const SurveyForm: React.FC<SurveyFormProps> = ({
                 disabled={disabled}
                 onClick={handleSubmit(onFormSubmit)}
               >
-                {/* Submit Survey */}
-                アンケートを送信
+                {submitLabel}
               </Button>
             ) : (
               <Button
