@@ -17,7 +17,7 @@ export const MDEditor = ({
 }: React.PropsWithChildren<MDEditorProps>) => {
   return (
     <div className={cn('markdowneditor-react-container', className)}>
-      <MDEditorUIW value={value} onChange={onChange} />
+      <MDEditorUIW value={value} onChange={onChange} overflow={false} />
     </div>
   )
 }
