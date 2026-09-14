@@ -89,9 +89,30 @@ export default function EditSurvey({ params }: { params: { id: string } }) {
 ```tsx
 import { SurveyForm } from '@mbc-cqrs-serverless/survey-web/SurveyForm'
 
-export default function Survey({ params }: { params: { id: string } }) {
-  return <SurveyForm surveyId={params.id} />
+export default function Survey({ schema }: { schema: SurveySchemaType }) {
+  return (
+    <SurveyForm
+      schema={schema}
+      onSubmit={(answers, meta) => saveAnswer(answers, meta)}
+    />
+  )
 }
+```
+
+`answers` is keyed by question id; `meta` lists each question's `id`, `label`, `type` and `value`.
+
+To edit a saved answer, pass it as `defaultValues`. It is read once on mount, so render the form
+after the answer has loaded (or remount it with `key`). Answers to questions that were removed from
+the schema since are dropped on submit.
+
+```tsx
+<SurveyForm
+  key={answer.id}
+  schema={schema}
+  defaultValues={answer.answers}
+  submitLabel="回答を更新"
+  onSubmit={(answers, meta) => updateAnswer(answer.id, answers, meta)}
+/>
 ```
 
 ## Question Types
