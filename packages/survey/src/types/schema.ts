@@ -151,6 +151,8 @@ const BaseQuestionSchema = z.object({
   label: z.string(),
   description: z.string().optional(),
   validation: BaseValidationRulesSchema.optional(),
+  // Locked questions are read-only in the creator: no edit, delete, duplicate or drag.
+  locked: z.boolean().optional(),
 })
 
 // ============================================================================

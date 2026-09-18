@@ -74,6 +74,14 @@ export const SectionHeaderCreator: React.FC<SectionHeaderCreatorProps> = ({
 
   const isLastRemainingSection = sectionHeaders.length <= 1
 
+  let sectionEndIndex = allItems.findIndex(
+    (item, index) => index > itemIndex && item.type === 'section-header'
+  )
+  if (sectionEndIndex === -1) sectionEndIndex = allItems.length
+  const hasLockedQuestion = allItems
+    .slice(itemIndex + 1, sectionEndIndex)
+    .some((item) => item.type !== 'section-header' && item.locked)
+
   const handleDuplicate = () => {
     const allItems = getValues('items')
     let endIndex = allItems.findIndex(
@@ -87,7 +95,9 @@ export const SectionHeaderCreator: React.FC<SectionHeaderCreatorProps> = ({
       if (item.type === 'section-header') {
         return { ...item, id: newId, title: `${item.title} (Copy)` }
       }
-      return { ...item, id: newId }
+      // Copies of locked questions are ordinary, editable questions.
+      const { locked, ...rest } = item
+      return { ...rest, id: newId }
     })
 
     const finalItems = [
@@ -154,12 +164,16 @@ export const SectionHeaderCreator: React.FC<SectionHeaderCreatorProps> = ({
             <DropdownMenuItem
               className="text-destructive"
               onSelect={(e) => e.preventDefault()}
-              disabled={isLastRemainingSection}
+              disabled={isLastRemainingSection || hasLockedQuestion}
             >
               <Trash2 className="mr-2 h-4 w-4" />
               <span>
                 {/* Delete section */}
                 セクションを削除
+                {hasLockedQuestion && (
+                  // (contains locked questions)
+                  <span className="ml-1 text-xs">(ロックされた質問を含む)</span>
+                )}
               </span>
             </DropdownMenuItem>
           </AlertDialogTrigger>

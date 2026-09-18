@@ -140,6 +140,17 @@ The library supports various question types:
 - **Date** - Date picker with optional time
 - **Time** - Time picker for time or duration
 
+### Locked Questions
+
+Set `locked: true` on a question to make it fixed in the survey creator: it cannot be edited,
+deleted, duplicated or dragged, and a section containing it cannot be deleted. Duplicating such a
+section produces unlocked copies. The lock is enforced in the UI only — validate it on the server
+if it must not be bypassed.
+
+```typescript
+{ id: 'q_email', type: 'short-text', label: 'Email', locked: true }
+```
+
 ## Validation Rules
 
 ### Text Validation
