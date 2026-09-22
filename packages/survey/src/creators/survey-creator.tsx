@@ -4,7 +4,7 @@ import { Button } from '../ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog'
 import { Input } from '../ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
-import { cn } from '../utils'
+import { cn, createId } from '../utils'
 import {
   DndContext,
   type DragEndEvent,
@@ -118,7 +118,7 @@ export const SurveyCreator: React.FC<SurveyCreatorProps> = ({
 
   useEffect(() => {
     if (!initialSchema) {
-      const newId = `sec_${Date.now()}`
+      const newId = createId('sec')
       const clientSideDefault: SurveySchemaType = {
         title: '未タイトル調査', // Untitled Survey
         description: '',
@@ -287,7 +287,7 @@ export const SurveyCreator: React.FC<SurveyCreatorProps> = ({
     let newItem: any
     if (type === 'section-header') {
       const newSection: SectionHeaderType = {
-        id: `sec_${Date.now()}`,
+        id: createId('sec'),
         type: 'section-header',
         title: `セクション ${
           items.filter((i) => i.type === 'section-header').length + 1
@@ -296,7 +296,7 @@ export const SurveyCreator: React.FC<SurveyCreatorProps> = ({
       newItem = newSection
     } else {
       const newQuestion: ShortTextQuestionType = {
-        id: `q_${Date.now()}`,
+        id: createId('q'),
         type: 'short-text',
         label: '',
         validation: { required: false },

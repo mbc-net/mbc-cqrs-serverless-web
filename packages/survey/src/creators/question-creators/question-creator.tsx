@@ -25,7 +25,7 @@ import {
 } from '../../ui/select'
 import { Separator } from '../../ui/separator'
 import { Switch } from '../../ui/switch'
-import { cn } from '../../utils'
+import { cn, createId } from '../../utils'
 import type { useSortable } from '@dnd-kit/sortable'
 import {
   AlignLeft,
@@ -37,13 +37,14 @@ import {
   Clock,
   Copy,
   GripHorizontal,
+  Lock,
   Minus,
   MoreVertical,
   Star,
   Trash2,
 } from 'lucide-react'
 import type React from 'react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import type {
   DateQuestionType,
@@ -143,20 +144,17 @@ export const QuestionCreator: React.FC<QuestionCreatorProps> = ({
     return false
   })
 
-  const isActive = activeElementId === questionId
-
-  // Sync question ID with question label
-  useEffect(() => {
-    if (questionLabelValue) {
-      setValue(`${itemPath}.id`, questionLabelValue)
-    }
-  }, [questionLabelValue, itemPath, setValue])
+  const isSelected = activeElementId === questionId
+  const isLocked =
+    !!questionData && 'locked' in questionData && !!questionData.locked
+  // Locked questions can be selected (for the add-item toolbar) but never edited.
+  const isActive = isSelected && !isLocked
 
   const handleDuplicate = () => {
     const currentItemData = getValues(`items.${itemIndex}`)
     const duplicatedItem = {
       ...JSON.parse(JSON.stringify(currentItemData)),
-      id: `q_${Date.now()}`,
+      id: createId('q'),
     }
     insertItem(itemIndex + 1, duplicatedItem)
     setPendingActiveDataId(duplicatedItem.id)
@@ -247,7 +245,7 @@ export const QuestionCreator: React.FC<QuestionCreatorProps> = ({
       }}
       className={cn(
         'rounded-lg border transition-all',
-        isActive
+        isSelected
           ? 'border-primary bg-card shadow-lg'
           : 'hover:bg-muted/50 border-transparent bg-white'
       )}
@@ -662,16 +660,24 @@ export const QuestionCreator: React.FC<QuestionCreatorProps> = ({
         // VIEW MODE
         // ============================================================================
         <div className="group relative cursor-pointer p-6">
-          <div
-            className="absolute left-1/2 top-3 flex -translate-x-1/2 cursor-grab justify-center opacity-0 transition-opacity group-hover:opacity-100"
-            {...dndAttributes}
-            {...dndListeners}
-          >
-            <GripHorizontal className="text-muted-foreground h-5 w-5" />
-          </div>
+          {!isLocked && (
+            <div
+              className="absolute left-1/2 top-3 flex -translate-x-1/2 cursor-grab justify-center opacity-0 transition-opacity group-hover:opacity-100"
+              {...dndAttributes}
+              {...dndListeners}
+            >
+              <GripHorizontal className="text-muted-foreground h-5 w-5" />
+            </div>
+          )}
           <div className="space-y-2">
-            <p className="font-semibold">
+            <p className="flex items-center gap-2 font-semibold">
               {questionLabel || '未タイトルの質問'} {/* Untitled Question */}
+              {isLocked && (
+                <Lock
+                  className="text-muted-foreground h-4 w-4"
+                  aria-label="ロックされた質問" // Locked question
+                />
+              )}
             </p>
             {questionData.description && (
               <p className="text-muted-foreground text-sm">

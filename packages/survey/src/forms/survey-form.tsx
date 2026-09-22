@@ -19,12 +19,30 @@ import type {
 } from '../types/schema' // Corrected import path
 import { cn } from '@/utils'
 
-type SurveyAnswers = Record<string, string | string[] | undefined>
+export type SurveyAnswers = Record<string, string | string[] | undefined>
+
+/**
+ * Answers carry question ids as keys, so a consumer would otherwise need the
+ * schema on hand to know what was asked. `meta` travels alongside them.
+ */
+export interface SurveyAnswerMeta {
+  id: string
+  label: string
+  type: SurveyQuestionItemType['type']
+  value: string | string[] | undefined
+}
+
 interface SurveyFormProps {
   schema: SurveySchemaType
-  onSubmit: (answers: SurveyAnswers) => void
+  onSubmit: (answers: SurveyAnswers, meta: SurveyAnswerMeta[]) => void
   children?: React.ReactNode
   disabled?: boolean
+  /**
+   * A previously saved answer, to edit it. Read once on mount: render the form
+   * after the answer has loaded, or remount it with `key`.
+   */
+  defaultValues?: SurveyAnswers
+  submitLabel?: string
 }
 
 interface SurveyPage {
@@ -41,8 +59,10 @@ export const SurveyForm: React.FC<SurveyFormProps> = ({
   onSubmit,
   children,
   disabled = false,
+  defaultValues,
+  submitLabel = 'アンケートを送信', // Submit Survey
 }) => {
-  const methods = useForm<SurveyAnswers>()
+  const methods = useForm<SurveyAnswers>({ defaultValues })
   const { handleSubmit, trigger, getValues, watch } = methods
 
   const surveyPages = useMemo((): SurveyPage[] => {
@@ -164,7 +184,23 @@ export const SurveyForm: React.FC<SurveyFormProps> = ({
     }
   }
   const onFormSubmit = (data: SurveyAnswers) => {
-    onSubmit(data)
+    const meta: SurveyAnswerMeta[] = surveyPages.flatMap((page) =>
+      page.questions.map((question) => ({
+        id: question.id,
+        // `SurveyQuestionItemType` excludes section headers at runtime, but
+        // the discriminated union doesn't narrow cleanly here, so guard the
+        // read the same way question-creator.tsx does elsewhere.
+        label: 'label' in question ? question.label : '',
+        type: question.type,
+        value: data[question.id],
+      }))
+    )
+    // Rebuilt from the schema so answers to questions deleted since
+    // `defaultValues` was saved don't ride along.
+    const answers: SurveyAnswers = Object.fromEntries(
+      meta.map(({ id, value }) => [id, value])
+    )
+    onSubmit(answers, meta)
   }
 
   if (!currentSection) {
@@ -291,8 +327,7 @@ export const SurveyForm: React.FC<SurveyFormProps> = ({
                 disabled={disabled}
                 onClick={handleSubmit(onFormSubmit)}
               >
-                {/* Submit Survey */}
-                アンケートを送信
+                {submitLabel}
               </Button>
             ) : (
               <Button
