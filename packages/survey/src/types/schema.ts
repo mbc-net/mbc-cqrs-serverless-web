@@ -151,6 +151,8 @@ const BaseQuestionSchema = z.object({
   label: z.string(),
   description: z.string().optional(),
   validation: BaseValidationRulesSchema.optional(),
+  // Locked questions are read-only in the creator: no edit, delete, duplicate or drag.
+  locked: z.boolean().optional(),
 })
 
 // ============================================================================
@@ -303,6 +305,23 @@ export const SurveySchema = z
     items: z.array(SurveyItemSchema),
   })
   .strip()
+  .superRefine((survey, ctx) => {
+    // Item ids double as react-hook-form field names and as the targets of
+    // `nextSectionId`, so two items sharing an id silently collapse into one
+    // form field.
+    const seen = new Set<string>()
+    survey.items.forEach((item, index) => {
+      if (seen.has(item.id)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['items', index, 'id'],
+          message: `Duplicate item id "${item.id}".`,
+        })
+        return
+      }
+      seen.add(item.id)
+    })
+  })
 
 // ============================================================================
 // INFERRED TYPESCRIPT TYPES

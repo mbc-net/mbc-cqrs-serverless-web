@@ -484,3 +484,45 @@ describe('validateSurveyJson', () => {
     expect(result.success).toBe(false)
   })
 })
+
+describe('SurveySchema duplicate id detection', () => {
+  const withIds = (ids: string[]) => ({
+    title: 'Duplicate id survey',
+    items: ids.map((id) => ({
+      id,
+      type: 'short-text' as const,
+      label: `Question ${id}`,
+    })),
+  })
+
+  it('accepts a survey whose item ids are all distinct', () => {
+    expect(SurveySchema.safeParse(withIds(['q_1', 'q_2'])).success).toBe(true)
+  })
+
+  it('rejects a survey with two items sharing an id', () => {
+    const result = SurveySchema.safeParse(withIds(['q_1', 'q_1']))
+    expect(result.success).toBe(false)
+  })
+
+  it('reports the duplicate on the second occurrence', () => {
+    const result = SurveySchema.safeParse(withIds(['q_1', 'q_2', 'q_1']))
+    expect(result.success).toBe(false)
+    if (result.success) return
+    expect(result.error.issues[0].path).toEqual(['items', 2, 'id'])
+  })
+
+  it('detects a question id colliding with a section id', () => {
+    const result = SurveySchema.safeParse({
+      title: 'Mixed',
+      items: [
+        { id: 'dup', type: 'section-header', title: 'Section' },
+        { id: 'dup', type: 'short-text', label: 'Question' },
+      ],
+    })
+    expect(result.success).toBe(false)
+  })
+
+  it('still allows hand-authored ids that do not use the q_ prefix', () => {
+    expect(SurveySchema.safeParse(withIds(['email', 'age'])).success).toBe(true)
+  })
+})
