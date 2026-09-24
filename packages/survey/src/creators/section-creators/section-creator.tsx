@@ -16,7 +16,7 @@ import { cn } from '../../utils'
 import type { useSortable } from '@dnd-kit/sortable'
 import { GripVertical, Trash2 } from 'lucide-react'
 import { Controller, useFormContext } from 'react-hook-form'
-import type { SurveyItemType } from '../../types/schema'
+import type { SectionHeaderType, SurveyItemType } from '../../types/schema'
 
 interface SectionCreatorProps {
   itemIndex: number
@@ -39,10 +39,7 @@ export const SectionCreator: React.FC<SectionCreatorProps> = ({
 }) => {
   const { register, control, watch, setValue } = useFormContext()
 
-  const itemData = watch(`items.${itemIndex}`) as Extract<
-    SurveyItemType,
-    { type: 'section-header' }
-  >
+  const itemData = watch(`items.${itemIndex}`) as SectionHeaderType
   const actionType = itemData?.action?.type
   const allItems: SurveyItemType[] = watch('items')
 
