@@ -148,6 +148,12 @@ export const SurveyCreator: React.FC<SurveyCreatorProps> = ({
     return () => subscription.unsubscribe()
   }, [watch, onSchemaChange])
 
+  // Nothing may be added into, or dragged out of, a locked section.
+  const isInLockedSection = (index: number) =>
+    !!items
+      .slice(0, index + 1)
+      .findLast((item) => item.type === 'section-header')?.locked
+
   useEffect(() => {
     if (!activeElementId) {
       setToolbarContext(null)
@@ -161,7 +167,7 @@ export const SurveyCreator: React.FC<SurveyCreatorProps> = ({
 
     const activeIndex = items.findIndex((item) => item.key === activeElementId)
 
-    if (element) {
+    if (element && !isInLockedSection(activeIndex)) {
       setToolbarContext({ top: element.offsetTop, index: activeIndex })
     } else {
       setToolbarContext(null)
@@ -267,7 +273,11 @@ export const SurveyCreator: React.FC<SurveyCreatorProps> = ({
       const oldIndex = items.findIndex((item) => item.key === active.id)
       const newIndex = items.findIndex((item) => item.key === over.id)
 
-      if (newIndex > 0) {
+      if (
+        newIndex > 0 &&
+        !isInLockedSection(oldIndex) &&
+        !isInLockedSection(newIndex)
+      ) {
         moveItem(oldIndex, newIndex)
       }
     }

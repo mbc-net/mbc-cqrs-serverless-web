@@ -168,6 +168,8 @@ export const SectionHeaderSchema = z
     type: z.literal('section-header'),
     title: z.string().min(1),
     description: z.string().optional(),
+    // Locked sections are fixed in the creator: no edit, delete, merge or adding items.
+    locked: z.boolean().optional(),
     action: z
       .discriminatedUnion('type', [
         z.object({ type: z.literal('submit') }).strict(),

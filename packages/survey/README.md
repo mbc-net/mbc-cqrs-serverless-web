@@ -151,6 +151,18 @@ if it must not be bypassed.
 { id: 'q_email', type: 'short-text', label: 'Email', locked: true }
 ```
 
+### Locked Sections
+
+Set `locked: true` on a section header to fix the section in the survey creator: its title and
+description cannot be edited, it cannot be deleted or merged (nor can the section below merge into
+it), and nothing can be added into it. The floating action bar is hidden while the section or one
+of its questions is selected, and questions cannot be dragged in or out. The section can still be
+moved, and duplicating it produces an unlocked copy. Questions inside keep their own `locked` flag.
+
+```typescript
+{ id: 'sec_profile', type: 'section-header', title: 'Profile', locked: true }
+```
+
 ## Validation Rules
 
 ### Text Validation
