@@ -10,12 +10,15 @@ interface FloatingActionBarProps {
   context: { top: number; index: number } | null
   onAddQuestion: (index: number) => void
   onAddSection: (index: number) => void
+  /** Inside a locked section: questions cannot be added into it. */
+  disableAddQuestion?: boolean
 }
 
 export const FloatingActionBar: React.FC<FloatingActionBarProps> = ({
   context,
   onAddQuestion,
   onAddSection,
+  disableAddQuestion = false,
 }) => {
   if (!context) {
     return null
@@ -33,8 +36,13 @@ export const FloatingActionBar: React.FC<FloatingActionBarProps> = ({
         type="button"
         variant="ghost"
         size="icon"
+        disabled={disableAddQuestion}
         onClick={() => onAddQuestion(context.index)}
-        title="質問を追加" // Add Question
+        title={
+          disableAddQuestion
+            ? 'ロックされたセクションには質問を追加できません' // Cannot add questions into a locked section
+            : '質問を追加' // Add Question
+        }
       >
         <Plus className="h-5 w-5" />
       </Button>
@@ -62,7 +70,11 @@ export const FloatingActionBar: React.FC<FloatingActionBarProps> = ({
         variant="ghost"
         size="icon"
         onClick={() => onAddSection(context.index)}
-        title="セクションを追加" // Add Section
+        title={
+          disableAddQuestion
+            ? 'ロックされたセクションの後にセクションを追加' // Add section after locked section
+            : 'セクションを追加' // Add Section
+        }
       >
         <Tally4 className="h-5 w-5" />
       </Button>
