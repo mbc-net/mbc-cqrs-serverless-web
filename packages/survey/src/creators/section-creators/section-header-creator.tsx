@@ -29,12 +29,13 @@ import {
   ChevronUp,
   Combine,
   Copy,
+  Lock,
   MoreVertical,
   Trash2,
 } from 'lucide-react'
 import { useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-import type { SurveyItemType, SurveySchemaType } from '../../types/schema'
+import type { SectionHeaderType, SurveySchemaType } from '../../types/schema'
 
 interface SectionHeaderCreatorProps {
   itemIndex: number
@@ -59,11 +60,14 @@ export const SectionHeaderCreator: React.FC<SectionHeaderCreatorProps> = ({
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
 
   const allItems = watch('items')
-  const isActive = activeElementId === itemId
-  const itemData = watch(`items.${itemIndex}`) as Extract<
-    SurveyItemType,
-    { type: 'section-header' }
-  >
+  const itemData = watch(`items.${itemIndex}`) as SectionHeaderType
+  const isLocked = !!itemData?.locked
+  // Locked sections can be selected but never edited.
+  const isActive = activeElementId === itemId && !isLocked
+  // Merging would move this section's questions into a locked section above.
+  const isAboveLocked = allItems
+    .slice(0, itemIndex)
+    .findLast((item) => item.type === 'section-header')?.locked
 
   const sectionHeaders = allItems.filter(
     (item) => item.type === 'section-header'
@@ -92,11 +96,11 @@ export const SectionHeaderCreator: React.FC<SectionHeaderCreatorProps> = ({
     const itemsToDuplicate = allItems.slice(itemIndex, endIndex)
     const duplicatedItems = itemsToDuplicate.map((item) => {
       const newId = createId(item.type === 'section-header' ? 'sec' : 'q')
-      if (item.type === 'section-header') {
-        return { ...item, id: newId, title: `${item.title} (Copy)` }
-      }
-      // Copies of locked questions are ordinary, editable questions.
+      // Copies of locked sections and questions are ordinary, editable items.
       const { locked, ...rest } = item
+      if (rest.type === 'section-header') {
+        return { ...rest, id: newId, title: `${rest.title} (Copy)` }
+      }
       return { ...rest, id: newId }
     })
 
@@ -151,7 +155,12 @@ export const SectionHeaderCreator: React.FC<SectionHeaderCreatorProps> = ({
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={handleMerge}
-            disabled={itemIndex === 0 || isLastRemainingSection}
+            disabled={
+              itemIndex === 0 ||
+              isLastRemainingSection ||
+              isLocked ||
+              isAboveLocked
+            }
           >
             <Combine className="mr-2 h-4 w-4" />
             <span>
@@ -164,7 +173,7 @@ export const SectionHeaderCreator: React.FC<SectionHeaderCreatorProps> = ({
             <DropdownMenuItem
               className="text-destructive"
               onSelect={(e) => e.preventDefault()}
-              disabled={isLastRemainingSection || hasLockedQuestion}
+              disabled={isLastRemainingSection || hasLockedQuestion || isLocked}
             >
               <Trash2 className="mr-2 h-4 w-4" />
               <span>
@@ -264,9 +273,15 @@ export const SectionHeaderCreator: React.FC<SectionHeaderCreatorProps> = ({
         >
           <div className="flex items-start justify-between">
             <div className="space-y-1">
-              <p className="font-semibold">
+              <p className="flex items-center gap-2 font-semibold">
                 {itemData?.title || '未タイトルセクション'}{' '}
                 {/* Untitled Section */}
+                {isLocked && (
+                  <Lock
+                    className="text-muted-foreground h-4 w-4"
+                    aria-label="ロックされたセクション" // Locked section
+                  />
+                )}
               </p>
               {itemData?.description && (
                 <p className="text-muted-foreground text-sm">
