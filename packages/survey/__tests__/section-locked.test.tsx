@@ -81,19 +81,80 @@ describe('floating action bar with a locked section', () => {
     fireEvent.click(screen.getByText('Open'))
 
     expect(screen.queryByTitle('質問を追加')).not.toBeNull()
+    expect(
+      (screen.getByTitle('質問を追加') as HTMLButtonElement).disabled
+    ).toBe(false)
   })
 
-  it('hides when the locked section header is selected', () => {
+  it('shows add-section but disables add-question when the locked section header is selected', () => {
     render(<SurveyCreator initialSchema={schema} onSubmit={jest.fn()} />)
     fireEvent.click(screen.getByText('Locked'))
 
-    expect(screen.queryByTitle('質問を追加')).toBeNull()
+    expect(
+      (
+        screen.getByTitle(
+          'ロックされたセクションには質問を追加できません'
+        ) as HTMLButtonElement
+      ).disabled
+    ).toBe(true)
+    expect(
+      (
+        screen.getByTitle(
+          'ロックされたセクションの後にセクションを追加'
+        ) as HTMLButtonElement
+      ).disabled
+    ).toBe(false)
   })
 
-  it('hides when a question inside the locked section is selected', () => {
+  it('shows add-section but disables add-question when a question inside the locked section is selected', () => {
     render(<SurveyCreator initialSchema={schema} onSubmit={jest.fn()} />)
     fireEvent.click(screen.getByText('Inside locked'))
 
-    expect(screen.queryByTitle('質問を追加')).toBeNull()
+    expect(
+      (
+        screen.getByTitle(
+          'ロックされたセクションには質問を追加できません'
+        ) as HTMLButtonElement
+      ).disabled
+    ).toBe(true)
+    expect(
+      (
+        screen.getByTitle(
+          'ロックされたセクションの後にセクションを追加'
+        ) as HTMLButtonElement
+      ).disabled
+    ).toBe(false)
+  })
+
+  it('inserts a new section after the locked section, not inside it', () => {
+    const onSchemaChange = jest.fn()
+    render(
+      <SurveyCreator
+        initialSchema={schema}
+        onSubmit={jest.fn()}
+        onSchemaChange={onSchemaChange}
+      />
+    )
+    fireEvent.click(screen.getByText('Inside locked'))
+    fireEvent.click(
+      screen.getByTitle('ロックされたセクションの後にセクションを追加')
+    )
+
+    // New section is activated for editing → title lives in an input.
+    expect(screen.getByDisplayValue('セクション 3')).toBeTruthy()
+
+    const latest = onSchemaChange.mock.calls.at(-1)?.[0] as SurveySchemaType
+    expect(latest.items.map((item) => item.id)).toEqual([
+      'sec_1',
+      'q_a',
+      expect.any(String), // new unlocked section
+      'sec_2',
+      'q_b',
+    ])
+    expect(latest.items[2]).toMatchObject({
+      type: 'section-header',
+      title: 'セクション 3',
+    })
+    expect(latest.items[2]).not.toHaveProperty('locked', true)
   })
 })

@@ -149,10 +149,20 @@ export const SurveyCreator: React.FC<SurveyCreatorProps> = ({
   }, [watch, onSchemaChange])
 
   // Nothing may be added into, or dragged out of, a locked section.
+  // Adding a *section* after a locked section is allowed (inserts at section end).
   const isInLockedSection = (index: number) =>
     !!items
       .slice(0, index + 1)
       .findLast((item) => item.type === 'section-header')?.locked
+
+  /** First index after the section that contains `fromIndex` (or `items.length`). */
+  const getSectionEndIndex = (fromIndex: number) => {
+    if (fromIndex < 0) return items.length
+    for (let i = fromIndex + 1; i < items.length; i++) {
+      if (items[i].type === 'section-header') return i
+    }
+    return items.length
+  }
 
   useEffect(() => {
     if (!activeElementId) {
@@ -167,7 +177,9 @@ export const SurveyCreator: React.FC<SurveyCreatorProps> = ({
 
     const activeIndex = items.findIndex((item) => item.key === activeElementId)
 
-    if (element && !isInLockedSection(activeIndex)) {
+    // Still show the toolbar inside a locked section so the user can add a
+    // section *after* it (add-question is disabled separately).
+    if (element) {
       setToolbarContext({ top: element.offsetTop, index: activeIndex })
     } else {
       setToolbarContext(null)
@@ -293,7 +305,20 @@ export const SurveyCreator: React.FC<SurveyCreatorProps> = ({
 
   const handleAddItem = (type: 'section-header' | 'short-text') => {
     const activeIndex = items.findIndex((item) => item.key === activeElementId)
-    const insertIndex = activeIndex !== -1 ? activeIndex + 1 : items.length
+    const inLocked = activeIndex !== -1 ? isInLockedSection(activeIndex) : false
+
+    // Questions cannot be inserted into a locked section.
+    if (type === 'short-text' && inLocked) return
+
+    // From a locked section, place the new section after that section's last item
+    // (not after the currently selected item, which would land inside the lock).
+    let insertIndex: number
+    if (type === 'section-header' && inLocked) {
+      insertIndex = getSectionEndIndex(activeIndex)
+    } else {
+      insertIndex = activeIndex !== -1 ? activeIndex + 1 : items.length
+    }
+
     let newItem: any
     if (type === 'section-header') {
       const newSection: SectionHeaderType = {
@@ -497,6 +522,11 @@ export const SurveyCreator: React.FC<SurveyCreatorProps> = ({
               </div>
               <FloatingActionBar
                 context={toolbarContext}
+                disableAddQuestion={
+                  toolbarContext !== null &&
+                  toolbarContext.index >= 0 &&
+                  isInLockedSection(toolbarContext.index)
+                }
                 onAddQuestion={() => handleAddItem('short-text')}
                 onAddSection={() => handleAddItem('section-header')}
               />
