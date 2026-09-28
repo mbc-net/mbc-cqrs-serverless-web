@@ -1,5 +1,4 @@
 import { defineConfig } from 'tsup'
-import { exec } from 'child_process'
 import postcss from 'postcss'
 import tailwindcss from 'tailwindcss'
 import autoprefixer from 'autoprefixer'
@@ -27,6 +26,10 @@ export default defineConfig({
   // React、React DOM、Next.jsを外部化してコンテキスト分離問題を解決
   external: ['react', 'react-dom', 'next', 'next/navigation', 'next/dynamic'],
   esbuildOptions(options) {
+    // Classic JSX needs `React` in scope for `React.createElement`. The banner
+    // supplies it; `postbuild.js` then strips colliding
+    // `import * as React from "react"` lines so Turbopack does not error with
+    // "the name `React` is defined multiple times".
     options.jsx = 'transform'
     options.jsxFactory = 'React.createElement'
     options.jsxFragment = 'React.Fragment'
@@ -63,14 +66,10 @@ export default defineConfig({
 
       console.log('CSS processed successfully with Tailwind CSS!')
 
-      // Run the original post-build script
-      exec('node ./postbuild.js', (err, stdout, stderr) => {
-        if (err) {
-          console.error('Error during post-build:', stderr)
-          return
-        }
-        console.log(stdout)
-      })
+      // Run post-build synchronously so "use client" + React import dedupe
+      // finish before consumers copy/publish `dist/`.
+      const { execSync } = await import('child_process')
+      console.log(execSync('node ./postbuild.js', { encoding: 'utf8' }))
     } catch (error) {
       console.error('Error processing CSS:', error)
     }
