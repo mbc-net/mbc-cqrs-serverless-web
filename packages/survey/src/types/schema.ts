@@ -20,6 +20,36 @@ const QuestionOptionSchema = z
   .strict()
 
 /**
+ * Option values identify answers, so they must be unique within a question.
+ * `other` and `other:<text>` are reserved for the "Other" option's answers.
+ */
+const refineOptionValues = (
+  options: { value: string; isOther?: boolean }[],
+  ctx: z.RefinementCtx
+) => {
+  const seen = new Set<string>()
+  options.forEach((opt, i) => {
+    if (seen.has(opt.value)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: [i, 'value'],
+        message: '値が重複しています', // Duplicate value
+      })
+    } else if (
+      !opt.isOther &&
+      (opt.value === 'other' || opt.value.startsWith('other:'))
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: [i, 'value'],
+        message: '「other」は予約された値です', // "other" is a reserved value
+      })
+    }
+    seen.add(opt.value)
+  })
+}
+
+/**
  * Base validation rules common to all questions.
  */
 const BaseValidationRulesSchema = z.object({
@@ -222,7 +252,8 @@ export const SingleChoiceQuestionSchema = BaseQuestionSchema.extend({
   type: z.literal('single-choice'),
   options: z
     .array(QuestionOptionSchema)
-    .min(1, 'Single-choice questions must have at least one option.'),
+    .min(1, 'Single-choice questions must have at least one option.')
+    .superRefine(refineOptionValues),
   validation: SingleChoiceValidationSchema.optional(),
 }).strip()
 
@@ -233,7 +264,8 @@ export const MultipleChoiceQuestionSchema = BaseQuestionSchema.extend({
   type: z.literal('multiple-choice'),
   options: z
     .array(QuestionOptionSchema.omit({ nextSectionId: true }))
-    .min(1, 'Multiple-choice questions must have at least one option.'),
+    .min(1, 'Multiple-choice questions must have at least one option.')
+    .superRefine(refineOptionValues),
   validation: MultipleChoiceValidationSchema.optional(),
 }).strip()
 
@@ -244,7 +276,8 @@ export const DropdownQuestionSchema = BaseQuestionSchema.extend({
   type: z.literal('dropdown'),
   options: z
     .array(QuestionOptionSchema)
-    .min(1, 'Dropdown questions must have at least one option.'),
+    .min(1, 'Dropdown questions must have at least one option.')
+    .superRefine(refineOptionValues),
   validation: DropdownValidationSchema.optional(),
 }).strip()
 
