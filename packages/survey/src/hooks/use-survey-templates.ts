@@ -3,7 +3,6 @@ import type {
   SurveyTemplateDataListEntity,
 } from '../types'
 import { clientAxiosInstance } from '../client/http'
-import { xTenantCode } from '../client/http/config'
 import { useEffect, useState } from 'react'
 
 type UseSurveyTemplatesParams = {
@@ -49,9 +48,6 @@ export const useSurveyTemplates = (
         await clientAxiosInstance.get<SurveyTemplateControllerSearchDataResponse>(
           '/api/survey-template',
           {
-            headers: {
-              'x-tenant-code': xTenantCode,
-            },
             params: {
               page,
               pageSize,

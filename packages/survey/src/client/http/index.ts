@@ -1,6 +1,6 @@
 import { fetchAuthSession } from 'aws-amplify/auth'
 import axios, { type AxiosInstance, type CreateAxiosDefaults } from 'axios'
-import { defaultConfig } from './config'
+import { defaultConfig, getTenantCode } from './config'
 
 /**
  * Creates and configures an Axios instance with a request interceptor
@@ -33,6 +33,9 @@ function createAxiosInstance(
         }
       } catch (error) {
         console.error('Error fetching authentication session:', error)
+      }
+      if (!reqConfig.headers['x-tenant-code']) {
+        reqConfig.headers['x-tenant-code'] = getTenantCode()
       }
       return reqConfig
     },

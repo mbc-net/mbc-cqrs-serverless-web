@@ -7,7 +7,7 @@ import {
   type DecodedMessage,
   subscribeMessage,
 } from './subscribe'
-import { xTenantCode } from '../http/config'
+import { getTenantCode } from '../http/config'
 import apolloClient from './index'
 
 export type CommandDoneCallback = (
@@ -45,7 +45,7 @@ export function useSubscribeCommandStatus(doneCallback: CommandDoneCallback) {
       msgSubs = subscribeMessage(
         apolloClient,
         {
-          tenantCode: xTenantCode,
+          tenantCode: getTenantCode(),
           action: ActionEnum.COMMAND_STATUS,
           id: reqId,
         },
