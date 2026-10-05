@@ -54,7 +54,15 @@ const SortableOption: React.FC<{
   removeOption,
   isOther = false,
 }) => {
-  const { control, register, watch, setValue } = useFormContext()
+  const {
+    control,
+    register,
+    watch,
+    formState: { errors },
+  } = useFormContext()
+  const valueError = (errors as any).items?.[itemIndex]?.options?.[index]?.value
+    ?.message as string | undefined
+  const valueInputId = `items-${itemIndex}-options-${index}-value`
 
   const allItems: SurveyItemType[] = watch('items')
   const sectionHeaders = allItems.filter(
@@ -70,87 +78,102 @@ const SortableOption: React.FC<{
   }
 
   return (
-    <div ref={setNodeRef} style={style} className="flex items-center gap-2">
-      {!isOther && (
-        <div
-          className="cursor-grab touch-none p-1"
-          {...attributes}
-          {...listeners}
-        >
-          <GripVertical className="text-muted-foreground h-5 w-5" />
-        </div>
-      )}
-      {isOther && <div className="w-[29px]" />}
-      <div className="flex-1">
-        <Input
-          placeholder={`オプション ${index + 1}`} // "Option ${index + 1}"
-          disabled={isOther}
-          {...register(`items.${itemIndex}.options.${index}.label`, {
-            onChange: (e) => {
-              if (!isOther) {
-                setValue(
-                  `items.${itemIndex}.options.${index}.value`,
-                  e.target.value
-                )
-              }
-            },
-          })}
-        />
-      </div>
-
-      {(questionType === 'single-choice' || questionType === 'dropdown') &&
-        showBranching &&
-        !isOther && (
-          <div className="w-[180px]">
-            <Controller
-              control={control}
-              name={`items.${itemIndex}.options.${index}.nextSectionId`}
-              render={({ field: selectField }) => (
-                <Select
-                  value={selectField.value || ''}
-                  onValueChange={(value) => {
-                    selectField.onChange(
-                      value === DEFAULT_SELECT_VALUE ? undefined : value
-                    )
-                  }}
-                >
-                  <SelectTrigger className="w-[180px] truncate text-xs">
-                    <SelectValue
-                      placeholder="セクションに移動..."
-                      className="block min-w-0 truncate"
-                    />
-                    {/* Go to section... */}
-                  </SelectTrigger>
-                  <SelectContent className="max-w-[380px]">
-                    <SelectItem value={DEFAULT_SELECT_VALUE}>
-                      {/* Default (Next Section) */}
-                      デフォルト (次のセクション)
-                    </SelectItem>
-                    {sectionHeaders.map((sec) => (
-                      <SelectItem key={sec.id} value={sec.id}>
-                        {/* Untitled Section */}
-                        {sec.title || '未タイトルセクション'}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            />
+    <div ref={setNodeRef} style={style}>
+      <div className="flex items-center gap-2">
+        {!isOther && (
+          <div
+            className="cursor-grab touch-none p-1"
+            {...attributes}
+            {...listeners}
+          >
+            <GripVertical className="text-muted-foreground h-5 w-5" />
           </div>
         )}
+        {isOther && <div className="w-[29px]" />}
+        <div className="flex-1">
+          <Input
+            placeholder={`オプション ${index + 1}`} // "Option ${index + 1}"
+            disabled={isOther}
+            {...register(`items.${itemIndex}.options.${index}.label`)}
+          />
+        </div>
 
-      {!isOther && (
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className="hover:bg-destructive/10 hover:text-destructive shrink-0"
-          onClick={() => removeOption(index)}
+        <Label
+          htmlFor={valueInputId}
+          className="text-muted-foreground shrink-0 text-xs"
         >
-          <Trash2 className="h-4 w-4" />
-        </Button>
+          値 {/* Value */}
+        </Label>
+        {/* Input renders its own `w-full` wrapper, so the width must live out here */}
+        <div className="w-[90px] shrink-0">
+          <Input
+            id={valueInputId}
+            className="text-center"
+            aria-invalid={!!valueError}
+            {...(isOther
+              ? { value: 'other', disabled: true, readOnly: true }
+              : register(`items.${itemIndex}.options.${index}.value`))}
+          />
+        </div>
+
+        {(questionType === 'single-choice' || questionType === 'dropdown') &&
+          showBranching &&
+          !isOther && (
+            <div className="w-[180px]">
+              <Controller
+                control={control}
+                name={`items.${itemIndex}.options.${index}.nextSectionId`}
+                render={({ field: selectField }) => (
+                  <Select
+                    value={selectField.value || ''}
+                    onValueChange={(value) => {
+                      selectField.onChange(
+                        value === DEFAULT_SELECT_VALUE ? undefined : value
+                      )
+                    }}
+                  >
+                    <SelectTrigger className="w-[180px] truncate text-xs">
+                      <SelectValue
+                        placeholder="セクションに移動..."
+                        className="block min-w-0 truncate"
+                      />
+                      {/* Go to section... */}
+                    </SelectTrigger>
+                    <SelectContent className="max-w-[380px]">
+                      <SelectItem value={DEFAULT_SELECT_VALUE}>
+                        {/* Default (Next Section) */}
+                        デフォルト (次のセクション)
+                      </SelectItem>
+                      {sectionHeaders.map((sec) => (
+                        <SelectItem key={sec.id} value={sec.id}>
+                          {/* Untitled Section */}
+                          {sec.title || '未タイトルセクション'}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </div>
+          )}
+
+        {!isOther && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="hover:bg-destructive/10 hover:text-destructive shrink-0"
+            title="削除" // Delete
+            onClick={() => removeOption(index)}
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        )}
+        {isOther && <div className="w-9 shrink-0" />}
+      </div>
+      {valueError && (
+        <p className="text-destructive mt-1 text-right text-xs">{valueError}</p>
       )}
-      {isOther && <div className="w-[40px]" />}
     </div>
   )
 }
@@ -166,7 +189,7 @@ export const OptionsCreator: React.FC<OptionsCreatorProps> = ({
   questionType,
   showBranching,
 }) => {
-  const { control, watch, setValue } = useFormContext()
+  const { control, watch } = useFormContext()
 
   const {
     fields: optionFields,
@@ -218,7 +241,14 @@ export const OptionsCreator: React.FC<OptionsCreatorProps> = ({
 
   const addOption = () => {
     const newLabel = `オプション ${sortableFields.length + 1}` // "Option ${sortableFields.length + 1}"
-    appendOption({ label: newLabel, value: newLabel })
+    // Next number after the highest numeric value, so deletions never cause duplicates
+    const maxValue = Math.max(
+      0,
+      ...(options || [])
+        .map((opt: any) => Number(opt?.value))
+        .filter(Number.isInteger)
+    )
+    appendOption({ label: newLabel, value: String(maxValue + 1) })
   }
 
   const toggleOtherOption = () => {
