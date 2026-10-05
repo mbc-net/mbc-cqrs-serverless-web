@@ -306,6 +306,75 @@ describe('DropdownQuestionSchema', () => {
   })
 })
 
+describe('choice option values', () => {
+  const schemas = [
+    ['single-choice', SingleChoiceQuestionSchema],
+    ['multiple-choice', MultipleChoiceQuestionSchema],
+    ['dropdown', DropdownQuestionSchema],
+  ] as const
+
+  it.each(schemas)(
+    '%s accepts values that differ from labels',
+    (type, schema) => {
+      const result = schema.safeParse({
+        id: 'q1',
+        type,
+        label: 'Q',
+        options: [
+          { value: '1', label: 'Yes' },
+          { value: '2', label: 'No' },
+        ],
+      })
+      expect(result.success).toBe(true)
+    }
+  )
+
+  it.each(schemas)(
+    '%s rejects duplicate values on the duplicate row',
+    (type, schema) => {
+      const result = schema.safeParse({
+        id: 'q1',
+        type,
+        label: 'Q',
+        options: [
+          { value: '1', label: 'Yes' },
+          { value: '1', label: 'No' },
+        ],
+      })
+      expect(result.success).toBe(false)
+      expect(result.error?.issues[0].path).toEqual(['options', 1, 'value'])
+    }
+  )
+
+  it.each(schemas)(
+    '%s rejects reserved "other" values on regular options',
+    (type, schema) => {
+      for (const value of ['other', 'other:x']) {
+        const result = schema.safeParse({
+          id: 'q1',
+          type,
+          label: 'Q',
+          options: [{ value, label: 'A' }],
+        })
+        expect(result.success).toBe(false)
+      }
+    }
+  )
+
+  it('accepts the "other" value on the isOther option', () => {
+    const result = SingleChoiceQuestionSchema.safeParse({
+      id: 'q1',
+      type: 'single-choice',
+      label: 'Q',
+      options: [
+        { value: '1', label: 'A' },
+        { value: 'other', label: 'その他', isOther: true },
+      ],
+    })
+    expect(result.success).toBe(true)
+  })
+})
+
 describe('RatingQuestionSchema', () => {
   it('should accept a minimal rating question with defaults', () => {
     const result = RatingQuestionSchema.safeParse({
