@@ -9,10 +9,19 @@ const defaultConfig: CreateAxiosDefaults<any> = {
   timeout: 30 * 1000, // 30 seconds
   headers: {
     'Content-Type': 'application/json',
-    'x-tenant-code': process.env.NEXT_PUBLIC_TENANT_CODE || 'common',
   },
 }
 
-const xTenantCode = process.env.NEXT_PUBLIC_TENANT_CODE || 'common'
+let resolveTenantCode = () => process.env.NEXT_PUBLIC_TENANT_CODE || 'common'
 
-export { defaultConfig, xTenantCode }
+/**
+ * Lets the host app decide the tenant per request (e.g. an admin switching scope).
+ * Used for the `x-tenant-code` header and command-status subscriptions.
+ */
+const setTenantCodeResolver = (resolver: () => string) => {
+  resolveTenantCode = resolver
+}
+
+const getTenantCode = () => resolveTenantCode()
+
+export { defaultConfig, getTenantCode, setTenantCodeResolver }

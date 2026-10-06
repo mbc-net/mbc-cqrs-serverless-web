@@ -47,6 +47,11 @@
       "import": "./dist/SurveyCreator.mjs",
       "require": "./dist/SurveyCreator.js"
     },
+    "./tenant": {
+      "types": "./dist/tenant.d.ts",
+      "import": "./dist/tenant.mjs",
+      "require": "./dist/tenant.js"
+    },
     "./styles.css": "./dist/styles.css"
   },
   "scripts": {
